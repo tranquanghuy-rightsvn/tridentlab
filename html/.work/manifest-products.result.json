@@ -1,0 +1,37 @@
+[
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Customised-Abutments.jpg",
+    "dest": "images/card-implant-prostheses.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Multi-Layer-Zirconia.jpg",
+    "dest": "images/card-other-products.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Temporary-Solutions.jpg",
+    "dest": "images/card-dentures.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Implant-Supported-Restorations.jpg",
+    "dest": "images/card-implant-surgical-guide.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/IPS-e.max_.jpg",
+    "dest": "images/card-crown-and-bridge.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/CEREC-digital-Design.jpg",
+    "dest": "images/card-digital-design.jpg",
+    "ok": true
+  },
+  {
+    "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Shade-Selection-Service.jpg",
+    "dest": "images/card-shade-selection-service.jpg",
+    "ok": true
+  }
+]

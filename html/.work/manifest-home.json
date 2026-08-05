@@ -1,0 +1,16 @@
+[
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/02/logo.png", "dest": "images/logo.png" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2022/06/tagline.png", "dest": "images/tagline.png" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/PDL-Image-4-scaled.jpeg", "dest": "images/hero-bg.jpeg" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/03/Premium-Dental-Lab-img.png", "dest": "images/welcome-teeth.png" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/02/footer-logo.png", "dest": "images/footer-logo.png" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/02/p-logo.png", "dest": "images/p-logo-ghost.png" },
+  { "url": "https://premiumdentallab.com.au/wp-content/uploads/2021/02/Our-Products.jpg", "dest": "images/products-bg.jpg" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJt7Ml1RMC.woff", "dest": "fonts/dosis-200.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJabMl1RMC.woff", "dest": "fonts/dosis-300.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJN7Ml1RMC.woff", "dest": "fonts/dosis-400.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJBbMl1RMC.woff", "dest": "fonts/dosis-500.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJ6bQl1RMC.woff", "dest": "fonts/dosis-600.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJ0LQl1RMC.woff", "dest": "fonts/dosis-700.woff" },
+  { "url": "https://fonts.gstatic.com/s/dosis/v34/HhyJU5sn9vOmLxNkIwRSjTVNWLEJt7Ql1RMC.woff", "dest": "fonts/dosis-800.woff" }
+]
