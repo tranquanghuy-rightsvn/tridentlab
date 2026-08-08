@@ -3,123 +3,280 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trident Dental Lab</title>
-<link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="css/home.css">
+<title>Trident Dental Lab — Built to Feel Natural</title>
+<meta name="description" content="Precision implant dentistry and natural smile transformations from Trident Dental Lab.">
+<link rel="stylesheet" href="css/home-new.css">
 </head>
-<body>
+<body class="ln">
 
-<header class="site-header">
-  <div class="container">
-    <a href="index.html" class="site-logo"><img src="images/logo.png" alt="Trident Dental Lab"></a>
-    <nav class="main-nav">
+<header class="ln-header">
+  <div class="ln-container">
+    <a href="index.html" class="ln-logo">Trident <span class="ln-star">&#10022;</span></a>
+    <nav class="ln-nav">
       <ul>
-        <li class="current"><a href="index.html">Home</a></li>
-        <li><a href="about-us/index.html">About Us</a></li>
-        <li><a href="products/index.html">Products</a></li>
-        <li><a href="faq/index.html">FAQ</a></li>
-        <li><a href="contact-us/index.html">Contact Us</a></li>
+        <li><a href="#clinic">Clinic</a></li>
+        <li><a href="#treatments">Treatments</a></li>
+        <li><a href="#journey">Technology</a></li>
+        <li><a href="#results">Results</a></li>
       </ul>
-      <button class="mobile-menu-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      <a href="#contact" class="ln-nav-contact">Contact <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
     </nav>
+    <button class="ln-menu-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
-  <nav class="mobile-nav">
-    <ul>
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about-us/index.html">About Us</a></li>
-      <li><a href="products/index.html">Products</a></li>
-      <li><a href="faq/index.html">FAQ</a></li>
-      <li><a href="contact-us/index.html">Contact Us</a></li>
-    </ul>
+  <nav class="ln-mobile-nav">
+    <a href="#clinic">Clinic</a>
+    <a href="#treatments">Treatments</a>
+    <a href="#journey">Technology</a>
+    <a href="#results">Results</a>
+    <a href="#contact">Contact</a>
   </nav>
 </header>
 
 <main>
 
-  <section class="hero">
-    <div class="hero-slides">
-      <div class="hero-slide" style="background-image: url('images/hero-bg.jpeg');"></div>
-      <div class="hero-slide" style="background-image: url('images/banner-2.webp');"></div>
-      <div class="hero-slide" style="background-image: url('images/banner-3.webp');"></div>
+  <!-- Hero -->
+  <section class="ln-hero" id="clinic">
+    <div class="ln-container ln-hero-grid">
+      <div class="ln-hero-copy">
+        <h1 class="ln-reveal">Built<br>to Feel<br>Natural</h1>
+        <p class="ln-hero-sub ln-reveal">Precision implant dentistry &amp; natural smile transformations</p>
+        <a href="contact-us/index.html" class="ln-btn ln-btn-solid ln-reveal">Begin with a Consultation</a>
+      </div>
+      <div class="ln-hero-media">
+        <img src="images/hero.png" alt="Dental tooth and mirror tool">
+      </div>
+      <p class="ln-hero-note ln-reveal">Every smile is unique. We combine advanced implant dentistry, digital precision, and aesthetic expertise to create results that feel like your own.</p>
     </div>
-    <div class="container hero-inner">
-      <img src="images/tagline.png" alt="Your local Dental Lab" class="hero-tagline">
-      <a href="contact-us/index.html" class="btn btn-light">Contact Us</a>
+    <span class="ln-hero-scroll"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16m0 0-6-6m6 6 6-6"/></svg></span>
+  </section>
+
+  <!-- Stats -->
+  <section class="ln-stats">
+    <div class="ln-container">
+      <div class="ln-stats-top ln-reveal">
+        <p class="ln-eyebrow"><span class="ln-star">&#10022;</span> 1,200+ Smiles created.</p>
+        <p>Thousands of patients have trusted us with their smiles. We create precise, aesthetic solutions where medical expertise meets artistry.</p>
+      </div>
+      <div class="ln-stats-grid">
+        <div class="ln-stat ln-reveal">
+          <p class="ln-stat-number">15+</p>
+          <p class="ln-stat-label">Years of Clinical Expertise</p>
+        </div>
+        <div class="ln-stat ln-reveal">
+          <p class="ln-stat-number">98%</p>
+          <p class="ln-stat-label">Patient Satisfaction Rate</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <section class="welcome">
-    <div class="container welcome-inner">
-      <div class="welcome-media">
-        <img src="images/welcome-teeth.png" alt="Dental crowns">
+  <!-- Results / testimonials -->
+  <section class="ln-results" id="results">
+    <div class="ln-container">
+      <div class="ln-results-head">
+        <div class="ln-reveal">
+          <p>The most successful treatment is often the one nobody notices.</p>
+          <p>Every smile is designed to complement your natural features, preserving what makes you uniquely you.</p>
+        </div>
+        <h2 class="ln-reveal">Real Stories<br>Natural Results</h2>
       </div>
-      <div class="welcome-content">
-        <img src="images/p-logo-ghost.png" alt="" class="welcome-watermark">
-        <h3>Welcome to</h3>
-        <h2>Trident Dental Lab</h2>
-        <p>As dentists, we are responsible for the services that we provide to the patient. In the case of a filling, for example, we have full control over that process from start to finish as so can confidently stand behind the service we have provided to the patient. Where there are requirements for lab work however, we lose control over a part of the process. If there are any problems with colour, thickness, design, aesthetics, fit, or a combination of all of these things, it can undermine our clinical efforts and result in a negative experience or outcome for the patient, the clinician and the practice.</p>
-        <a href="about-us/index.html" class="btn btn-gold">Read More</a>
+      <div class="ln-cases">
+        <article class="ln-case ln-reveal">
+          <img src="images/new-case-alexander.jpg" alt="Alexander, dental implant patient">
+          <a href="#contact" class="ln-case-pill">View Alexander Case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </article>
+        <article class="ln-case ln-reveal">
+          <img src="images/new-case-emma.jpg" alt="Emma, dental implant patient">
+          <a href="#contact" class="ln-case-pill">View Emma Case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </article>
+        <article class="ln-case ln-reveal">
+          <img src="images/new-case-henrik.jpg" alt="Henrik, dental implant patient">
+          <a href="#contact" class="ln-case-pill">View Henrik Case <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+        </article>
+      </div>
+      <p class="ln-results-outro ln-reveal">A Smile<br>Built Around You</p>
+    </div>
+  </section>
+
+  <!-- Treatments -->
+  <section class="ln-treatments" id="treatments">
+    <div class="ln-container">
+      <div class="ln-treatments-intro ln-reveal">
+        <p>No templates. No trends. No one-size-fits-all solutions.</p>
+        <p>Every treatment begins with understanding your goals, facial features, and the outcome you want to achieve before a single decision is made.</p>
+        <p>Because great dentistry isn&rsquo;t about changing who you are.</p>
+      </div>
+      <div class="ln-treatments-head ln-reveal">
+        <h2>Treatments</h2>
+        <p>Designed around your goals</p>
+      </div>
+      <div class="ln-treatment-cards">
+        <article class="ln-treatment-card ln-reveal">
+          <div class="ln-treatment-card-media">
+            <img src="images/card-crown-and-bridge.jpg" alt="Smile design close-up">
+          </div>
+          <div class="ln-treatment-card-body">
+            <h3>Smile Design</h3>
+            <p>Enhance balance, harmony, and aesthetics while preserving a natural appearance.</p>
+            <a href="contact-us/index.html" class="ln-btn ln-btn-solid">Book a Consultation</a>
+            <p class="ln-treatment-card-note">Personalised quote on consultation</p>
+          </div>
+        </article>
+        <article class="ln-treatment-card ln-reveal">
+          <div class="ln-treatment-card-media">
+            <img src="images/card-implant-prostheses.jpg" alt="Dental implant model">
+          </div>
+          <div class="ln-treatment-card-body">
+            <h3>Dental Implants</h3>
+            <p>Restore comfort, function, and confidence with implant solutions designed to last.</p>
+            <a href="contact-us/index.html" class="ln-btn ln-btn-solid">Book a Consultation</a>
+            <p class="ln-treatment-card-note">Personalised quote on consultation</p>
+          </div>
+        </article>
+        <article class="ln-treatment-card ln-reveal">
+          <div class="ln-treatment-card-media">
+            <img src="images/card-other-products.jpg" alt="Precision dental craftsmanship">
+          </div>
+          <div class="ln-treatment-card-body">
+            <h3>Full Smile Rehabilitation</h3>
+            <p>Comprehensive treatment for patients requiring both functional and aesthetic restoration.</p>
+            <a href="contact-us/index.html" class="ln-btn ln-btn-solid">Book a Consultation</a>
+            <p class="ln-treatment-card-note">Tailored treatment plans</p>
+          </div>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="products">
-    <div class="container">
-      <h2>Our Products</h2>
-      <nav class="products-grid">
-        <ul>
-          <li><a href="#">Ceramic Layering</a></li>
-          <li><a href="#">CEREC Digital Design</a></li>
-          <li><a href="products/digital-design/digital-wax-ups/index.html">Digital Wax Ups</a></li>
-          <li><a href="#">Customised Abutments</a></li>
-          <li><a href="#">Implant Supported Restorations</a></li>
-          <li><a href="#">Shade Selection Service</a></li>
-          <li><a href="#">IPS e.max</a></li>
-          <li><a href="#">Multi-layer Zirconia</a></li>
-          <li><a href="#">Occlusal Splints</a></li>
-          <li><a href="#">Temporary Solutions</a></li>
-          <li><a href="#">Zirconia</a></li>
-        </ul>
-      </nav>
+  <!-- Journey -->
+  <section class="ln-journey" id="journey">
+    <div class="ln-container">
+      <div class="ln-journey-head ln-reveal">
+        <p class="ln-eyebrow">The Journey</p>
+        <h2>A Clear Path Forward</h2>
+        <p>A seamless journey from the first consultation to your final result. Every step is designed around your goals and vision.</p>
+      </div>
+      <div class="ln-journey-steps">
+        <div class="ln-journey-step ln-reveal">
+          <p class="ln-journey-num">01</p>
+          <h3>Consultation</h3>
+          <p>Understanding your goals and concerns</p>
+        </div>
+        <div class="ln-journey-step ln-reveal">
+          <p class="ln-journey-num">02</p>
+          <h3>Digital Planning</h3>
+          <p>Creating a personalised treatment strategy</p>
+        </div>
+        <div class="ln-journey-step ln-reveal">
+          <p class="ln-journey-num">03</p>
+          <h3>Precision Treatment</h3>
+          <p>Expert care delivered with meticulous attention to detail</p>
+        </div>
+        <div class="ln-journey-step ln-reveal">
+          <p class="ln-journey-num">04</p>
+          <h3>Long-term Results</h3>
+          <p>Natural outcomes designed to stand the test of time</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team teaser -->
+  <section class="ln-team">
+    <div class="ln-container ln-team-grid">
+      <h2 class="ln-reveal">The People Behind Every Transformation</h2>
+      <div class="ln-team-copy ln-reveal">
+        <p>Exceptional results begin long before treatment. They begin with listening, understanding your goals, and building a treatment plan designed around you.</p>
+        <a href="about-us/index.html" class="ln-btn ln-btn-solid">Meet the Team <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M7 7h10v10M7 17 17 7"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Approach -->
+  <section class="ln-approach">
+    <div class="ln-container">
+      <div class="ln-approach-head">
+        <p class="ln-reveal">From the moment you arrive, every aspect of your experience is designed to feel clear, comfortable, and reassuring.</p>
+        <h2 class="ln-reveal">A Calmer Approach<br>to Dentistry</h2>
+      </div>
+      <div class="ln-approach-grid">
+        <div class="ln-approach-item ln-reveal">
+          <span class="ln-star">&#10022;</span>
+          <h3>Unhurried Consultation</h3>
+          <p>Because important decisions shouldn&rsquo;t feel rushed.</p>
+        </div>
+        <div class="ln-approach-item ln-reveal">
+          <span class="ln-star">&#10022;</span>
+          <h3>Precision Planning</h3>
+          <p>Every treatment begins long before the first procedure.</p>
+        </div>
+        <div class="ln-approach-item ln-reveal">
+          <span class="ln-star">&#10022;</span>
+          <h3>Complete Transparency</h3>
+          <p>Know exactly what to expect at every stage.</p>
+        </div>
+        <div class="ln-approach-item ln-reveal">
+          <span class="ln-star">&#10022;</span>
+          <h3>Care Beyond Treatment</h3>
+          <p>Support that continues long after your appointment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="ln-contact" id="contact">
+    <div class="ln-container">
+      <div class="ln-contact-head ln-reveal">
+        <h2>Discover the Power of<br>Your Smile</h2>
+        <p>Because a confident smile can change the way you feel, connect, and experience the world.</p>
+      </div>
+      <div class="ln-contact-grid">
+        <div class="ln-contact-info ln-reveal">
+          <a href="mailto:admin@tridentdentallab.com.au">admin@tridentdentallab.com.au</a>
+          <a href="tel:+61735053980">(07) 3505 3980</a>
+          <a href="#" target="_blank" rel="noopener">Instagram</a>
+          <a href="#" target="_blank" rel="noopener">Facebook</a>
+          <span>Ripley, QLD, Australia</span>
+        </div>
+        <div class="ln-contact-form-wrap ln-reveal">
+          <p class="ln-contact-form-note">Leave your contacts and<br>we will contact you shortly.</p>
+          <form class="ln-contact-form" onsubmit="return false;">
+            <div class="ln-field">
+              <label for="ln-name">Name</label>
+              <input type="text" id="ln-name" name="name" required>
+            </div>
+            <div class="ln-field">
+              <label for="ln-phone">Phone</label>
+              <input type="tel" id="ln-phone" name="phone">
+            </div>
+            <div class="ln-field">
+              <label for="ln-email">Email</label>
+              <input type="email" id="ln-email" name="email" required>
+            </div>
+            <div class="ln-field">
+              <label for="ln-date">Preferred date of visit</label>
+              <input type="text" id="ln-date" name="visit_date" placeholder="mm/dd/yyyy">
+            </div>
+            <button type="submit" class="ln-btn ln-btn-outline">Send <span class="ln-star">&#10022;</span></button>
+          </form>
+        </div>
+      </div>
     </div>
   </section>
 
 </main>
 
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-top">
-      <div class="footer-col">
-        <span class="footer-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
-        </span>
-        <p class="footer-address">T20C Ripley Town Centre, 20 Main Street,<br>Ripley, QLD, 4306</p>
-      </div>
-      <div class="footer-col footer-logo">
-        <img src="images/logo.png" alt="Trident Dental Lab">
-      </div>
-      <div class="footer-col">
-        <span class="footer-icon">
-          <svg viewBox="0 0 24 24"><path d="M2 4h20v16H2V4zm2 2v.01L12 13l8-6.99V6H4zm16 3.24l-8 6.99-8-6.99V18h16V9.24z"/></svg>
-        </span>
-        <p class="footer-email">admin@tridentdentallab.com.au</p>
-      </div>
-    </div>
-    <nav class="footer-nav">
-      <ul>
-        <li><a href="index.html" class="current">Home</a></li>
-        <li><a href="about-us/index.html">About Us</a></li>
-        <li><a href="products/index.html">Products</a></li>
-        <li><a href="faq/index.html">FAQ</a></li>
-        <li><a href="contact-us/index.html">Contact Us</a></li>
-      </ul>
-    </nav>
-    <div class="footer-bottom">
-      <p>&copy; 2021 Trident Dental Lab</p>
+<footer class="ln-footer">
+  <div class="ln-container">
+    <p class="ln-footer-word">Trident <span class="ln-star">&#10022;</span></p>
+    <div class="ln-footer-bottom">
+      <span>&copy; 2026 Trident Dental Lab</span>
+      <span>All rights reserved</span>
     </div>
   </div>
 </footer>
 
-<script src="js/main.js"></script>
+<script src="js/home-new.js"></script>
 </body>
 </html>
