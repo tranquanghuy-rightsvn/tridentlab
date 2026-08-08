@@ -161,24 +161,27 @@
 .ln-nav {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 22px;
 }
 
 .ln-nav ul {
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 22px;
 }
 
 .ln-nav a {
-  font-size: 15px;
+  font-size: 13.5px;
   color: var(--ln-ink-soft);
+  white-space: nowrap;
   transition: color 0.2s ease;
 }
 
 .ln-nav a:hover,
-.ln-nav li.current a {
+.ln-nav li.current a,
+.ln-nav a.current {
   color: var(--ln-ink);
+  font-weight: 600;
 }
 
 .ln-nav .ln-nav-contact {
@@ -821,6 +824,234 @@
   color: var(--ln-ink-faint);
 }
 
+/* ---------- Generic 2-column split ---------- */
+.ln-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.ln-split-top {
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .ln-split {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Inner page hero ---------- */
+.ln-page-hero {
+  padding: 70px 0 30px;
+}
+
+.ln-page-hero h1 {
+  font-size: clamp(40px, 6vw, 66px);
+  font-weight: 600;
+  text-transform: uppercase;
+  line-height: 1.05;
+  max-width: 760px;
+}
+
+.ln-page-hero p {
+  margin-top: 22px;
+  max-width: 560px;
+  color: var(--ln-ink-soft);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ---------- Generic prose section ---------- */
+.ln-section {
+  padding: 60px 0;
+}
+
+.ln-section-tight {
+  padding: 30px 0 60px;
+}
+
+.ln-prose {
+  max-width: 700px;
+}
+
+.ln-prose p {
+  color: var(--ln-ink-soft);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.ln-prose p + p {
+  margin-top: 18px;
+}
+
+.ln-prose h2 {
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* ---------- Download / prescription card ---------- */
+.ln-download-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  background: var(--ln-card);
+  border-radius: 22px;
+  padding: 36px;
+  max-width: 620px;
+}
+
+.ln-download-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--ln-ink);
+  color: var(--ln-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ln-download-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.ln-download-body h3 {
+  font-size: 19px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.ln-download-body p {
+  font-size: 14px;
+  color: var(--ln-ink-soft);
+  margin-bottom: 16px;
+  line-height: 1.6;
+}
+
+/* ---------- Steps list (email instructions, workflow) ---------- */
+.ln-steps-list {
+  counter-reset: ln-step;
+  list-style: none;
+  max-width: 620px;
+}
+
+.ln-steps-list li {
+  counter-increment: ln-step;
+  position: relative;
+  padding-left: 52px;
+  margin-bottom: 26px;
+}
+
+.ln-steps-list li::before {
+  content: counter(ln-step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: -4px;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ln-gold);
+}
+
+.ln-steps-list h4 {
+  font-size: 16px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.ln-steps-list p {
+  font-size: 14px;
+  color: var(--ln-ink-soft);
+  line-height: 1.65;
+}
+
+/* ---------- Contact strip (email / phone highlight) ---------- */
+.ln-contact-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 28px 32px;
+  background: var(--ln-card);
+  border-radius: 22px;
+  margin-top: 40px;
+}
+
+.ln-contact-strip-item span {
+  display: block;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ln-ink-faint);
+  margin-bottom: 6px;
+}
+
+.ln-contact-strip-item a {
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--ln-ink);
+}
+
+.ln-contact-strip-item a:hover {
+  color: var(--ln-gold);
+}
+
+/* ---------- Materials & brands grid ---------- */
+.ln-materials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.ln-material-card {
+  padding: 30px 26px;
+  background: var(--ln-card);
+  border-radius: 20px;
+}
+
+.ln-material-card h3 {
+  font-size: 18px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.ln-material-card p {
+  font-size: 14px;
+  color: var(--ln-ink-soft);
+  line-height: 1.6;
+}
+
+/* ---------- Gallery grid ---------- */
+.ln-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.ln-gallery-item {
+  border-radius: 18px;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.ln-gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.ln-gallery-item:hover img {
+  transform: scale(1.06);
+}
+
 /* ---------- Reveal-on-scroll ---------- */
 .ln-reveal {
   opacity: 0;
@@ -933,9 +1164,14 @@
   .ln-contact-form-wrap {
     text-align: left;
   }
+
+  .ln-materials-grid,
+  .ln-gallery-grid {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1180px) {
   .ln-nav ul,
   .ln-nav .ln-nav-contact {
     display: none;
@@ -944,7 +1180,9 @@
   .ln-menu-toggle {
     display: flex;
   }
+}
 
+@media (max-width: 720px) {
   .ln-cases {
     grid-template-columns: 1fr;
     max-width: 380px;
@@ -966,5 +1204,21 @@
     flex-direction: column;
     gap: 8px;
     text-align: center;
+  }
+
+  .ln-materials-grid,
+  .ln-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ln-download-card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .ln-contact-strip {
+    flex-direction: column;
+    gap: 20px;
   }
 }
