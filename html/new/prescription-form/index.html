@@ -50,7 +50,148 @@
     <div class="td-container">
       <p class="td-eyebrow td-reveal"><span class="td-dot"></span> Prescription Form</p>
       <h1 class="td-reveal">Send a Case in<br>Three Simple Steps</h1>
-      <p class="td-reveal">Download the Prescription Card, fill in your case details, and email it through with your scan file or impression. Our team will confirm receipt and keep you updated.</p>
+      <p class="td-reveal">Submit your case online in minutes, or download the Prescription Card and email it through. Either way, our team confirms receipt and keeps you updated.</p>
+    </div>
+  </section>
+
+  <!-- Send a Case wizard -->
+  <section class="td-section td-wizard-section" style="padding-top:10px;">
+    <div class="td-container">
+      <div class="td-wizard-intro td-reveal" id="td-wizard-intro">
+        <div>
+          <p class="td-eyebrow"><span class="td-dot"></span> Send a Case Online</p>
+          <h2>Submit a Prescription in 3 Steps</h2>
+          <p class="td-lead">Skip the PDF &mdash; fill in the prescription, attach your files, and submit directly from your browser.</p>
+        </div>
+        <button type="button" class="td-btn td-btn-solid" id="td-wizard-start">START NEW CASE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
+      </div>
+
+      <div class="td-wizard" id="td-wizard" hidden>
+        <ol class="td-wizard-progress" id="td-wizard-progress">
+          <li data-step="1"><span>01</span> Create Case</li>
+          <li data-step="2"><span>02</span> Upload Files</li>
+          <li data-step="3"><span>03</span> Review &amp; Submit</li>
+        </ol>
+
+        <form class="td-wizard-form" id="td-wizard-form" novalidate>
+          <div class="td-wizard-step" data-step="1">
+            <h3>Dentist Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field"><label for="wz-dentist-name">Dentist Name</label><input type="text" id="wz-dentist-name" required></div>
+              <div class="td-field"><label for="wz-practice">Practice</label><input type="text" id="wz-practice" required></div>
+              <div class="td-field"><label for="wz-email">Email</label><input type="email" id="wz-email" required></div>
+              <div class="td-field"><label for="wz-phone">Phone</label><input type="tel" id="wz-phone" required></div>
+            </div>
+
+            <h3>Patient Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field"><label for="wz-patient-name">Patient Name</label><input type="text" id="wz-patient-name" required></div>
+              <div class="td-field"><label for="wz-patient-ref">Record / Reference ID (optional)</label><input type="text" id="wz-patient-ref"></div>
+            </div>
+
+            <h3>Restoration Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field">
+                <label for="wz-restoration">Select Restoration</label>
+                <select id="wz-restoration" required>
+                  <option value="">Choose...</option>
+                  <option>Crown</option>
+                  <option>Bridge</option>
+                  <option>Veneer</option>
+                  <option>Denture</option>
+                  <option>Implant</option>
+                  <option>Night Guard</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="td-field">
+                <label for="wz-material">Material</label>
+                <select id="wz-material" required>
+                  <option value="">Choose...</option>
+                  <option>IPS e.max</option>
+                  <option>Multi-layer Zirconia</option>
+                  <option>Zirconia</option>
+                  <option>Ceramic Layering</option>
+                  <option>Denture Acrylic</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="td-field">
+                <label for="wz-shade">Shade</label>
+                <select id="wz-shade" required>
+                  <option value="">Choose...</option>
+                  <option>A1</option><option>A2</option><option>A3</option><option>A3.5</option><option>A4</option>
+                  <option>B1</option><option>B2</option><option>B3</option><option>B4</option>
+                  <option>C1</option><option>C2</option><option>C3</option><option>C4</option>
+                  <option>D2</option><option>D3</option><option>D4</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="td-field">
+              <label>Select Teeth</label>
+              <div class="td-tooth-chart" id="td-tooth-chart">
+                <div class="td-tooth-row" id="td-tooth-row-upper"></div>
+                <div class="td-tooth-row" id="td-tooth-row-lower"></div>
+              </div>
+              <p class="td-tooth-hint">Click a tooth number to select it (Universal numbering, 1&ndash;32).</p>
+            </div>
+
+            <div class="td-field">
+              <label for="wz-instructions">Design Instructions</label>
+              <textarea id="wz-instructions" rows="4"></textarea>
+            </div>
+
+            <div class="td-wizard-actions">
+              <span></span>
+              <button type="button" class="td-btn td-btn-solid td-wizard-next">Next: Upload Files <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
+            </div>
+          </div>
+
+          <div class="td-wizard-step" data-step="2" hidden>
+            <h3>Upload STL / PLY / OBJ</h3>
+            <label class="td-upload-drop" for="wz-scan-files">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+              <span>Click to choose files or drag them here</span>
+              <input type="file" id="wz-scan-files" accept=".stl,.ply,.obj" multiple>
+            </label>
+            <ul class="td-upload-list" id="wz-scan-list"></ul>
+
+            <h3>Upload Photos (optional)</h3>
+            <label class="td-upload-drop" for="wz-photo-files">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+              <span>Click to choose photos or drag them here</span>
+              <input type="file" id="wz-photo-files" accept="image/*" multiple>
+            </label>
+            <ul class="td-upload-list" id="wz-photo-list"></ul>
+
+            <div class="td-field">
+              <label for="wz-due-date">Due Date</label>
+              <input type="date" id="wz-due-date" required>
+            </div>
+
+            <div class="td-wizard-actions">
+              <button type="button" class="td-btn td-btn-outline td-wizard-back">Back</button>
+              <button type="button" class="td-btn td-btn-solid td-wizard-next">Next: Review</button>
+            </div>
+          </div>
+
+          <div class="td-wizard-step" data-step="3" hidden>
+            <h3>Review Your Case</h3>
+            <dl class="td-wizard-summary" id="td-wizard-summary"></dl>
+            <div class="td-wizard-actions">
+              <button type="button" class="td-btn td-btn-outline td-wizard-back">Back</button>
+              <button type="submit" class="td-btn td-btn-solid">SUBMIT CASE</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="td-wizard-confirm" id="td-wizard-confirm" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h3>Case Submitted</h3>
+          <p id="td-wizard-confirm-text"></p>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -178,5 +319,6 @@
 </footer>
 
 <script src="../js/main.js"></script>
+<script src="../js/case-wizard.js"></script>
 </body>
 </html>
