@@ -4,129 +4,321 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prescription Form - Trident Dental Lab</title>
-<meta name="description" content="Download the Trident Dental Lab prescription form and find out how to send your case by email.">
-<link rel="stylesheet" href="../css/home-new.css">
+<meta name="description" content="Download the Trident Dental Lab prescription form and find out how to send your case by email to cases.thetridentlab@gmail.com.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="../css/style.css">
 </head>
-<body class="ln">
+<body>
 
-<header class="ln-header">
-  <div class="ln-container">
-    <a href="../index.html" class="ln-logo">Trident <span class="ln-star">&#10022;</span></a>
-    <nav class="ln-nav">
+<header class="td-header">
+  <div class="td-container">
+    <a href="../index.html" class="td-logo">
+      <img src="../images/logo-mark.png" alt="Trident Dental Lab">
+      <span class="td-logo-text">Trident<small>Dental Lab</small></span>
+    </a>
+    <nav class="td-nav">
       <ul>
         <li><a href="../index.html">Home</a></li>
         <li><a href="../about-us/index.html">About Us</a></li>
         <li><a href="../services/index.html">Services</a></li>
-        <li><a href="../digital-workflow/index.html">Digital Workflow</a></li>
-        <li><a href="../prescription-form/index.html" class="current">Prescription Form</a></li>
         <li><a href="../materials-brands/index.html">Materials &amp; Brands</a></li>
         <li><a href="../gallery/index.html">Gallery</a></li>
+        <li><a href="../prescription-form/index.html" class="current">Prescription Form</a></li>
       </ul>
-      <a href="../contact-us/index.html" class="ln-nav-contact">Contact <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      <div class="td-nav-actions">
+        <a href="../contact-us/index.html" class="td-btn td-btn-solid">Get a Quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
+      </div>
     </nav>
-    <button class="ln-menu-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    <button class="td-menu-toggle" aria-label="Toggle menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
-  <nav class="ln-mobile-nav">
+  <nav class="td-mobile-nav">
     <a href="../index.html">Home</a>
     <a href="../about-us/index.html">About Us</a>
     <a href="../services/index.html">Services</a>
-    <a href="../digital-workflow/index.html">Digital Workflow</a>
-    <a href="../prescription-form/index.html">Download Prescription Form (PDF)</a>
     <a href="../materials-brands/index.html">Materials &amp; Brands</a>
     <a href="../gallery/index.html">Gallery</a>
-    <a href="../contact-us/index.html">Contact</a>
+    <a href="../prescription-form/index.html" class="current">Prescription Form</a>
+    <a href="../contact-us/index.html">Contact / Get a Quote</a>
   </nav>
 </header>
 
 <main>
 
-  <section class="ln-page-hero">
-    <div class="ln-container">
-      <p class="ln-eyebrow ln-reveal"><span class="ln-star">&#10022;</span> Prescription Form</p>
-      <h1 class="ln-reveal">Send a Case in<br>Three Simple Steps</h1>
-      <p class="ln-reveal">Download the prescription form, fill in your case details, and email it through with your scan file or impression. Our team will confirm receipt and keep you updated.</p>
+  <section class="td-page-hero">
+    <div class="td-container">
+      <p class="td-eyebrow td-reveal"><span class="td-dot"></span> Prescription Form</p>
+      <h1 class="td-reveal">Send a Case in<br>Three Simple Steps</h1>
+      <p class="td-reveal">Submit your case online in minutes, or download the Prescription Card and email it through. Either way, our team confirms receipt and keeps you updated.</p>
     </div>
   </section>
 
-  <section class="ln-section" style="padding-top:10px;">
-    <div class="ln-container">
-      <div class="ln-download-card ln-reveal">
-        <span class="ln-download-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
-        </span>
-        <div class="ln-download-body">
-          <h3>Prescription Form (PDF)</h3>
-          <p>The official Trident Dental Lab prescription form &mdash; patient details, restoration type, materials, shade and delivery date.</p>
-          <a href="../files/prescription-form.pdf" class="ln-btn ln-btn-solid" download>Download Prescription Form (PDF)</a>
+  <!-- Send a Case wizard -->
+  <section class="td-section td-wizard-section" style="padding-top:10px;">
+    <div class="td-container">
+      <div class="td-wizard-intro td-reveal" id="td-wizard-intro">
+        <div>
+          <p class="td-eyebrow"><span class="td-dot"></span> Send a Case Online</p>
+          <h2>Submit a Prescription in 3 Steps</h2>
+          <p class="td-lead">Skip the PDF &mdash; fill in the prescription, attach your files, and submit directly from your browser.</p>
         </div>
+        <button type="button" class="td-btn td-btn-solid" id="td-wizard-start">START NEW CASE <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
       </div>
-    </div>
-  </section>
 
-  <section class="ln-section">
-    <div class="ln-container">
-      <div class="ln-split ln-split-top">
-        <div class="ln-reveal">
-          <p class="ln-eyebrow" style="margin-bottom:22px;">How to Send a Case</p>
-          <ol class="ln-steps-list">
-            <li>
-              <h4>Download &amp; Complete the Form</h4>
-              <p>Fill in patient details, restoration type, materials, shade and requested delivery date. Add any notes for the technician in the comments field.</p>
-            </li>
-            <li>
-              <h4>Prepare Your Scan or Impression</h4>
-              <p>Export your intraoral scan as an STL file, or prepare the physical impression / model to be sent to the lab.</p>
-            </li>
-            <li>
-              <h4>Email Everything to the Lab</h4>
-              <p>Attach the completed prescription form and your scan file, then send to <a href="mailto:admin@tridentdentallab.com.au" style="color:var(--ln-ink); font-weight:600;">admin@tridentdentallab.com.au</a>. For physical impressions, courier or drop them at the lab with a printed copy of the form.</p>
-            </li>
-          </ol>
-        </div>
-        <div class="ln-reveal">
-          <div class="ln-contact-strip" style="margin-top:0; flex-direction:column;">
-            <div class="ln-contact-strip-item">
-              <span>Email cases to</span>
-              <a href="mailto:admin@tridentdentallab.com.au">admin@tridentdentallab.com.au</a>
+      <div class="td-wizard" id="td-wizard" hidden>
+        <ol class="td-wizard-progress" id="td-wizard-progress">
+          <li data-step="1"><span>01</span> Create Case</li>
+          <li data-step="2"><span>02</span> Upload Files</li>
+          <li data-step="3"><span>03</span> Review &amp; Submit</li>
+        </ol>
+
+        <form class="td-wizard-form" id="td-wizard-form" novalidate>
+          <div class="td-wizard-step" data-step="1">
+            <h3>Dentist Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field"><label for="wz-dentist-name">Dentist Name</label><input type="text" id="wz-dentist-name" required></div>
+              <div class="td-field"><label for="wz-practice">Practice</label><input type="text" id="wz-practice" required></div>
+              <div class="td-field"><label for="wz-email">Email</label><input type="email" id="wz-email" required></div>
+              <div class="td-field"><label for="wz-phone">Phone</label><input type="tel" id="wz-phone" required></div>
             </div>
-            <div class="ln-contact-strip-item">
-              <span>Questions? Call us</span>
-              <a href="tel:+61735053980">(07) 3505 3980</a>
+
+            <h3>Patient Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field"><label for="wz-patient-name">Patient Name</label><input type="text" id="wz-patient-name" required></div>
+              <div class="td-field"><label for="wz-patient-ref">Record / Reference ID (optional)</label><input type="text" id="wz-patient-ref"></div>
             </div>
-            <div class="ln-contact-strip-item">
-              <span>Lab address</span>
-              <a href="../contact-us/index.html">T20C Ripley Town Centre, 20 Main St, Ripley QLD</a>
+
+            <h3>Restoration Details</h3>
+            <div class="td-wizard-grid">
+              <div class="td-field">
+                <label for="wz-restoration">Select Restoration</label>
+                <select id="wz-restoration" required>
+                  <option value="">Choose...</option>
+                  <option>Crown</option>
+                  <option>Bridge</option>
+                  <option>Veneer</option>
+                  <option>Denture</option>
+                  <option>Implant</option>
+                  <option>Night Guard</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="td-field">
+                <label for="wz-material">Material</label>
+                <select id="wz-material" required>
+                  <option value="">Choose...</option>
+                  <option>IPS e.max</option>
+                  <option>Multi-layer Zirconia</option>
+                  <option>Zirconia</option>
+                  <option>Ceramic Layering</option>
+                  <option>Denture Acrylic</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div class="td-field">
+                <label for="wz-shade">Shade</label>
+                <select id="wz-shade" required>
+                  <option value="">Choose...</option>
+                  <option>A1</option><option>A2</option><option>A3</option><option>A3.5</option><option>A4</option>
+                  <option>B1</option><option>B2</option><option>B3</option><option>B4</option>
+                  <option>C1</option><option>C2</option><option>C3</option><option>C4</option>
+                  <option>D2</option><option>D3</option><option>D4</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="td-field">
+              <label>Select Teeth</label>
+              <div class="td-tooth-chart" id="td-tooth-chart">
+                <div class="td-tooth-row" id="td-tooth-row-upper"></div>
+                <div class="td-tooth-row" id="td-tooth-row-lower"></div>
+              </div>
+              <p class="td-tooth-hint">Click a tooth number to select it (Universal numbering, 1&ndash;32).</p>
+            </div>
+
+            <div class="td-field">
+              <label for="wz-instructions">Design Instructions</label>
+              <textarea id="wz-instructions" rows="4"></textarea>
+            </div>
+
+            <div class="td-wizard-actions">
+              <span></span>
+              <button type="button" class="td-btn td-btn-solid td-wizard-next">Next: Upload Files <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
             </div>
           </div>
-          <p style="margin-top:24px; font-size:13px; color:var(--ln-ink-faint); line-height:1.7;">Once we receive your case, our team will confirm by email within one business day and let you know if anything further is required.</p>
+
+          <div class="td-wizard-step" data-step="2" hidden>
+            <h3>Upload STL / PLY / OBJ</h3>
+            <label class="td-upload-drop" for="wz-scan-files">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+              <span>Click to choose files or drag them here</span>
+              <input type="file" id="wz-scan-files" accept=".stl,.ply,.obj" multiple>
+            </label>
+            <ul class="td-upload-list" id="wz-scan-list"></ul>
+
+            <h3>Upload Photos (optional)</h3>
+            <label class="td-upload-drop" for="wz-photo-files">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+              <span>Click to choose photos or drag them here</span>
+              <input type="file" id="wz-photo-files" accept="image/*" multiple>
+            </label>
+            <ul class="td-upload-list" id="wz-photo-list"></ul>
+
+            <div class="td-field">
+              <label for="wz-due-date">Due Date</label>
+              <input type="date" id="wz-due-date" required>
+            </div>
+
+            <div class="td-wizard-actions">
+              <button type="button" class="td-btn td-btn-outline td-wizard-back">Back</button>
+              <button type="button" class="td-btn td-btn-solid td-wizard-next">Next: Review</button>
+            </div>
+          </div>
+
+          <div class="td-wizard-step" data-step="3" hidden>
+            <h3>Review Your Case</h3>
+            <dl class="td-wizard-summary" id="td-wizard-summary"></dl>
+            <div class="td-wizard-actions">
+              <button type="button" class="td-btn td-btn-outline td-wizard-back">Back</button>
+              <button type="submit" class="td-btn td-btn-solid">SUBMIT CASE</button>
+            </div>
+          </div>
+        </form>
+
+        <div class="td-wizard-confirm" id="td-wizard-confirm" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13Z"/><path d="m9 12 2 2 4-4"/></svg>
+          <h3>Case Submitted</h3>
+          <p id="td-wizard-confirm-text"></p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Team teaser -->
-  <section class="ln-team">
-    <div class="ln-container ln-team-grid">
-      <h2 class="ln-reveal">Not Sure Which<br>Service You Need?</h2>
-      <div class="ln-team-copy ln-reveal">
-        <p>Have a look through our services, or call the lab directly and speak with a technician about your case.</p>
-        <a href="../services/index.html" class="ln-btn ln-btn-solid">View Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M7 7h10v10M7 17 17 7"/></svg></a>
+  <!-- Download -->
+  <section class="td-section" style="padding-top:10px;">
+    <div class="td-container">
+      <div class="td-download-card td-reveal">
+        <span class="td-download-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg>
+        </span>
+        <div class="td-download-body">
+          <h3>Trident Prescription Card (PDF)</h3>
+          <p>The official Trident Dental Lab prescription card &mdash; account &amp; case details, type of prosthesis, material, design and shade, in one editable PDF.</p>
+          <a href="../files/prescription-form.pdf" class="td-btn td-btn-solid" download>Download Prescription Form (PDF) <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></svg></a>
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- How to send -->
+  <section class="td-section" style="padding-top:0;">
+    <div class="td-container td-split">
+      <div class="td-reveal">
+        <p class="td-eyebrow"><span class="td-dot"></span> How to Send a Case</p>
+        <ol class="td-steps">
+          <li>
+            <div>
+              <h4>Download &amp; Complete the Card</h4>
+              <p>Fill in dentist &amp; practice details, patient name, type of prosthesis, material, design and shade. Add any notes for the technician under Additional Instructions.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h4>Prepare Your Scan or Impression</h4>
+              <p>Export your intraoral scan as an STL file, or prepare the physical impression / model to be sent to the lab.</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <h4>Email Everything to the Lab</h4>
+              <p>Attach the completed prescription card and your scan file, then send to <a href="mailto:cases.thetridentlab@gmail.com" style="color:var(--td-navy); font-weight:600;">cases.thetridentlab@gmail.com</a>. For physical impressions, courier or drop them at the lab with a printed copy of the card.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+      <div class="td-reveal td-reveal-d1">
+        <div class="td-contact-strip" style="grid-template-columns:1fr;">
+          <div class="td-contact-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+            <span>Email cases to</span>
+            <a href="mailto:cases.thetridentlab@gmail.com">cases.thetridentlab@gmail.com</a>
+          </div>
+          <div class="td-contact-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 3a2 2 0 0 1-.4 2L8 10.3a16 16 0 0 0 6 6l1.6-1.4a2 2 0 0 1 2-.4c1 .4 2 .6 3 .7a2 2 0 0 1 1.7 2Z"/></svg>
+            <span>Questions? Call us</span>
+            <a href="tel:+61430536731">0430 536 731</a>
+          </div>
+          <div class="td-contact-strip-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            <span>Lab address</span>
+            <a href="../contact-us/index.html">7 Laurieston St, Sunnybank Hills, QLD 4109</a>
+          </div>
+        </div>
+        <p style="margin-top:24px; font-size:13px; color:var(--td-ink-faint); line-height:1.7;">Once we receive your case, our team will confirm by email and let you know if anything further is required.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="td-container" style="padding-bottom:20px;">
+    <div class="td-cta td-reveal">
+      <div>
+        <h2>Not Sure Which Service You Need?</h2>
+        <p>Have a look through our services, or call the lab directly and speak with our team about your case.</p>
+      </div>
+      <a href="../services/index.html" class="td-btn td-btn-light">View Services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></a>
     </div>
   </section>
 
 </main>
 
-<footer class="ln-footer">
-  <div class="ln-container">
-    <p class="ln-footer-word">Trident <span class="ln-star">&#10022;</span></p>
-    <div class="ln-footer-bottom">
-      <span>&copy; 2026 Trident Dental Lab</span>
-      <span>All rights reserved</span>
+<footer class="td-footer">
+  <div class="td-container">
+    <div class="td-footer-top">
+      <div>
+        <div class="td-footer-brand">
+          <img src="../images/logo-mark-white.png" alt="Trident Dental Lab">
+          Trident Dental Lab
+        </div>
+        <p class="td-footer-desc">Precision-crafted dental restorations built with advanced technology and meticulous craftsmanship.</p>
+      </div>
+      <div>
+        <h4>Navigate</h4>
+        <ul>
+          <li><a href="../about-us/index.html">About Us</a></li>
+          <li><a href="../services/index.html">Services</a></li>
+          <li><a href="../materials-brands/index.html">Materials &amp; Brands</a></li>
+          <li><a href="../gallery/index.html">Gallery</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="../prescription-form/index.html">Prescription Form</a></li>
+          <li><a href="../files/prescription-form.pdf" download>Download PDF</a></li>
+          <li><a href="../contact-us/index.html">Contact</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul class="td-footer-contact">
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> cases.thetridentlab@gmail.com</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .3 2 .7 3a2 2 0 0 1-.4 2L8 10.3a16 16 0 0 0 6 6l1.6-1.4a2 2 0 0 1 2-.4c1 .4 2 .6 3 .7a2 2 0 0 1 1.7 2Z"/></svg> 0430 536 731</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-7.5 8-13a8 8 0 1 0-16 0c0 5.5 8 13 8 13Z"/><circle cx="12" cy="9" r="2.5"/></svg> 7 Laurieston St, Sunnybank Hills, QLD 4109</li>
+        </ul>
+      </div>
+    </div>
+    <div class="td-footer-bottom">
+      <span>&copy; 2026 Trident Dental Lab. All rights reserved.</span>
+      <div class="td-footer-social">
+        <a href="#" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg></a>
+        <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9h3V6h-3a3 3 0 0 0-3 3v2H8v3h3v6h3v-6h3l1-3h-4v-2a1 1 0 0 1 1-1Z"/></svg></a>
+      </div>
     </div>
   </div>
 </footer>
 
-<script src="../js/home-new.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/case-wizard.js"></script>
 </body>
 </html>
