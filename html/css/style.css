@@ -306,6 +306,28 @@ p { margin: 0; }
 }
 .td-field input:focus, .td-field textarea:focus, .td-field select:focus { border-color: var(--td-blue); }
 
+/* ---------- Open Account form ---------- */
+.td-account-wrap { background: #fff; border-radius: 26px; padding: 50px; box-shadow: 0 30px 60px -36px rgba(11,37,69,0.35); }
+.td-account-wrap h3 { font-size: 20px; margin-bottom: 6px; }
+.td-account-wrap > p { font-size: 14.5px; color: var(--td-ink-soft); margin-bottom: 30px; }
+.td-field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 24px; }
+.td-field-row .td-field { margin-bottom: 18px; }
+.td-form-section { margin-bottom: 34px; padding-bottom: 34px; border-bottom: 1px solid var(--td-line); }
+.td-form-section:last-of-type { border-bottom: none; margin-bottom: 26px; padding-bottom: 0; }
+.td-form-section h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--td-blue); margin-bottom: 20px; }
+.td-terms-box { background: var(--td-bg-soft, #f5f8fc); border-radius: 16px; padding: 22px 24px; font-size: 13px; color: var(--td-ink-soft); line-height: 1.8; margin-bottom: 20px; max-height: 180px; overflow-y: auto; }
+.td-terms-box p { margin-bottom: 6px; }
+.td-check-field { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--td-ink-soft); }
+.td-check-field input { width: auto; margin-top: 3px; }
+
+.td-center { text-align: center; margin-left: auto; margin-right: auto; }
+.td-step-section h2 { margin-bottom: 22px; }
+.td-step-section p { font-size: 16px; color: var(--td-ink-soft); line-height: 1.8; margin-bottom: 14px; }
+.td-step-section p strong { color: var(--td-navy); }
+.td-step-section-alt { background: var(--td-bg-soft); }
+.td-inline-pill { display: inline-block; background: var(--td-navy); color: #fff !important; padding: 4px 12px; border-radius: 8px; font-weight: 600; text-decoration: none; }
+.td-inline-pill:hover { background: var(--td-blue); }
+
 /* ---------- Download card (prescription form) ---------- */
 .td-download-card {
   display: flex; align-items: center; gap: 28px; background: #fff; border-radius: 26px; padding: 40px;
@@ -390,6 +412,8 @@ p { margin: 0; }
   .td-split, .td-split.td-split-rev { gap: 30px; }
   .td-process-steps { grid-template-columns: repeat(2, 1fr); }
   .td-gallery-grid { columns: 1; }
+  .td-account-wrap { padding: 30px; }
+  .td-field-row, .td-account-options { grid-template-columns: 1fr; }
   .td-cta { flex-direction: column; align-items: flex-start; padding: 40px; }
   .td-download-card { flex-direction: column; text-align: center; }
   .td-footer-top { grid-template-columns: 1fr; }
