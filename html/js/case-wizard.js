@@ -34,13 +34,13 @@ document.addEventListener("DOMContentLoaded", function () {
   function buildToothChart() {
     var upper = document.getElementById("td-tooth-row-upper");
     var lower = document.getElementById("td-tooth-row-lower");
-    var i, j;
-    for (i = 1; i <= 16; i++) {
-      upper.appendChild(makeToothButton(i));
-    }
-    for (j = 32; j >= 17; j--) {
-      lower.appendChild(makeToothButton(j));
-    }
+    var i;
+    // ISO 3950: upper right (11-18), upper left (21-28)
+    for (i = 18; i >= 11; i--) upper.appendChild(makeToothButton(i));
+    for (i = 21; i <= 28; i++) upper.appendChild(makeToothButton(i));
+    // ISO 3950: lower left (31-38), lower right (41-48)
+    for (i = 38; i >= 31; i--) lower.appendChild(makeToothButton(i));
+    for (i = 41; i <= 48; i++) lower.appendChild(makeToothButton(i));
   }
 
   function currentStepEl() {
@@ -93,10 +93,19 @@ document.addEventListener("DOMContentLoaded", function () {
     var scanFiles = fileNames(document.getElementById("wz-scan-files"));
     var photoFiles = fileNames(document.getElementById("wz-photo-files"));
     var sortedTeeth = selectedTeeth.slice().sort(function (a, b) { return a - b; });
+    var gender = fieldValue("wz-patient-gender");
+    var age = fieldValue("wz-patient-age");
+    var patientDetails = fieldValue("wz-patient-name");
+    if (gender || age) {
+      patientDetails += " — ";
+      if (gender) patientDetails += gender;
+      if (gender && age) patientDetails += ", ";
+      if (age) patientDetails += age + " years";
+    }
     var rows = [
       ["Dentist", fieldValue("wz-dentist-name") + " — " + fieldValue("wz-practice")],
       ["Contact", fieldValue("wz-email") + " / " + fieldValue("wz-phone")],
-      ["Patient", fieldValue("wz-patient-name") + (fieldValue("wz-patient-ref") ? " (" + fieldValue("wz-patient-ref") + ")" : "")],
+      ["Patient", patientDetails],
       ["Restoration", fieldValue("wz-restoration")],
       ["Material", fieldValue("wz-material")],
       ["Shade", fieldValue("wz-shade")],
