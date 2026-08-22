@@ -17,14 +17,20 @@ document.addEventListener("DOMContentLoaded", function () {
     var btn = document.createElement("button");
     btn.type = "button";
     btn.className = "td-tooth";
-    btn.textContent = num;
     btn.setAttribute("data-tooth", num);
+    // The number is printed in the chart image, so the button carries it for
+    // assistive tech and tooltips instead of visible text.
+    btn.setAttribute("aria-label", "Tooth " + num);
+    btn.setAttribute("aria-pressed", "false");
+    btn.title = "Tooth " + num;
     btn.addEventListener("click", function () {
       btn.classList.toggle("is-selected");
+      var on = btn.classList.contains("is-selected");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
       var idx = selectedTeeth.indexOf(num);
-      if (btn.classList.contains("is-selected") && idx === -1) {
+      if (on && idx === -1) {
         selectedTeeth.push(num);
-      } else if (!btn.classList.contains("is-selected") && idx !== -1) {
+      } else if (!on && idx !== -1) {
         selectedTeeth.splice(idx, 1);
       }
     });
@@ -38,9 +44,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // ISO 3950: upper right (11-18), upper left (21-28)
     for (i = 18; i >= 11; i--) upper.appendChild(makeToothButton(i));
     for (i = 21; i <= 28; i++) upper.appendChild(makeToothButton(i));
-    // ISO 3950: lower left (31-38), lower right (41-48)
-    for (i = 38; i >= 31; i--) lower.appendChild(makeToothButton(i));
-    for (i = 41; i <= 48; i++) lower.appendChild(makeToothButton(i));
+    // ISO 3950: lower right (48-41) stacked under upper right, then lower left (31-38) under upper left
+    for (i = 48; i >= 41; i--) lower.appendChild(makeToothButton(i));
+    for (i = 31; i <= 38; i++) lower.appendChild(makeToothButton(i));
   }
 
   function currentStepEl() {
