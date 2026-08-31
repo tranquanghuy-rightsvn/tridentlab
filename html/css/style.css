@@ -264,6 +264,7 @@ p { margin: 0; }
 
 /* ---------- Cards / grids ---------- */
 .td-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
+.td-card-grid--duo { grid-template-columns: repeat(2, 1fr); max-width: 800px; margin-left: auto; margin-right: auto; }
 .td-info-card { background: #fff; border-radius: 22px; padding: 38px; box-shadow: 0 24px 46px -34px rgba(11,37,69,0.3); }
 .td-info-card svg { width: 34px; height: 34px; color: var(--td-blue); margin-bottom: 20px; }
 .td-info-card h3 { font-size: 18.5px; margin-bottom: 10px; }
