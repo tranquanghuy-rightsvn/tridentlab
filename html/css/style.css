@@ -455,15 +455,19 @@ p { margin: 0; }
   .td-account-wrap { padding: 30px; }
   .td-field-row, .td-account-options { grid-template-columns: 1fr; }
   .td-cta { flex-direction: column; align-items: flex-start; padding: 40px; }
-  .td-send-cta { padding: 32px 18px; }
-  .td-send-cta h2 { font-size: 26px; max-width: none; margin-bottom: 22px; }
-  /* keep the desktop structure on mobile: 3 points in one row, icon over a
-     two-line centred label, thin dividers between - just tighter */
-  .td-send-cta-points { flex-wrap: nowrap; }
-  .td-send-cta-point { padding: 2px 9px; gap: 7px; }
-  .td-send-cta-point svg { width: 21px; height: 21px; }
-  .td-send-cta-point span { font-size: 11.5px; line-height: 1.3; }
+  /* Mobile mirrors fix.jpeg: big serif heading, three feature points in one
+     row (icon over a two-line centred label + thin dividers), full-width
+     divider, lead copy, then the button (content-width, left-aligned) + note */
+  .td-send-cta { padding: 30px 22px; }
+  .td-send-cta h2 { font-size: 31px; max-width: none; margin-bottom: 26px; line-height: 1.12; }
+  .td-send-cta-points { flex-wrap: nowrap; justify-content: space-between; }
+  .td-send-cta-point { flex: 1; padding: 2px 6px; gap: 8px; }
+  .td-send-cta-point:first-child { padding-left: 0; }
+  .td-send-cta-point svg { width: 24px; height: 24px; }
+  .td-send-cta-point span { font-size: 12px; line-height: 1.3; }
   .td-send-cta-lead { margin-top: 24px; padding-top: 24px; font-size: 15px; }
+  .td-send-cta-aside { align-items: flex-start; }
+  .td-send-cta-btn { width: auto; padding: 16px 30px; }
   .td-download-card { flex-direction: column; text-align: center; }
   .td-footer-top { grid-template-columns: 1fr; }
   .td-footer-bottom { flex-direction: column; align-items: flex-start; }
