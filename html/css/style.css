@@ -305,7 +305,7 @@ p { margin: 0; }
 .td-send-cta-point svg { width: 26px; height: 26px; color: var(--td-gold); flex-shrink: 0; }
 .td-send-cta-point span { font-size: 15px; line-height: 1.4; color: rgba(255,255,255,0.92); }
 .td-send-cta-lead { margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.14); max-width: 54ch; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.7); }
-.td-send-cta-aside { align-self: center; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.td-send-cta-aside { align-self: start; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .td-send-cta-btn { white-space: nowrap; background: #e8c07d; color: var(--td-navy); font-weight: 700; padding: 16px 32px; border-radius: 12px; }
 .td-send-cta-btn:hover { background: #efce97; color: var(--td-navy); }
 .td-send-cta-btn svg { color: var(--td-navy); }
