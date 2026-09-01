@@ -87,7 +87,8 @@ Schema cố định 7 cột cho cả 3 sheet, KHÔNG tách cột theo từng fie
   - Quote: `name` = `name`; `email` = `email`; `phone` = `phone`.
 - `status` — enum CHỐT (lưu nguyên văn tiếng Việt có dấu, UTF-8): `"Mới"` | `"Đang xử lý"` |
   `"Đã xử lý"` | `"Đã huỷ"`. Mặc định `"Mới"`. `STATUSES` khai giống hệt ở `gas/Code.js` VÀ
-  `gas/js.html` — sửa 1 bên phải sửa bên kia trong CÙNG 1 lượt.
+  `gas/js.html` — sửa 1 bên phải sửa bên kia (thư mục `gas/` được gitignore, không track
+  git nên không tự đồng bộ được — xem mục XIII).
 - `data` — **chuỗi JSON toàn bộ field client gửi lên** (đã bỏ `type`, `_hp`). Trang quản trị
   render `data` thành bảng key → value ở phần chi tiết. Nhờ vậy form thêm/bớt field không cần
   đổi schema Sheet hay code CMS.
@@ -259,3 +260,24 @@ trong `robots.txt`, không có link công khai trỏ tới.
 3. Project Settings > Script Properties: thêm `NOTIFY_EMAIL` = email nhận báo đơn.
 4. Vào tab Người dùng (đăng nhập bằng chính account deploy — là `root` ngầm định) để thêm các
    email `editor`.
+
+## XIII. `gas/` được gitignore — quy tắc đồng bộ code
+
+Thư mục `gas/` **không track git** (thêm vào `.gitignore` ngay từ đầu — playbook
+`free-cms-static-site-pipeline` gotcha #10: đây là code backend — logic phân quyền, cấu trúc
+kho dữ liệu, cơ chế xử lý — nhiều chủ dự án không muốn lộ trong repo chia sẻ được).
+
+Hệ quả bắt buộc tuân thủ:
+- Deploy bằng cách **dán/`clasp push` thủ công** vào Apps Script editor, KHÔNG qua git.
+- Sau MỖI lần agent sửa file trong `gas/`: agent phải **liệt kê rõ đúng tên từng file đã đổi**
+  cho chủ dự án (vì `git status`/`git diff` không thấy `gas/`), rồi nhắc: cập nhật file đó
+  trong Apps Script editor → **Deploy → Manage deployments → Edit → New version** (KHÔNG tạo
+  "New deployment" — sẽ sinh URL `/exec` mới).
+- `GAS.md` (file này) VẪN track git bình thường — nó là guideline, không phải code backend.
+
+⚠️ **Ghi nhận lệch chuẩn (2026-09-01):** ở 2 commit đầu (`9ac9887`, `c40ff4d`) toàn bộ `gas/`
+đã bị commit + push lên `origin/master` trước khi kịp gitignore. Commit sau đã `git rm -r
+--cached gas/` + thêm `.gitignore`, nên từ đây `gas/` không còn được track. NHƯNG 2 commit cũ
+vẫn nằm trong lịch sử trên remote — nếu repo này ở chế độ chia sẻ được / public thì code
+backend vẫn xem được trong lịch sử. Muốn xoá hẳn phải rewrite history + force-push (làm hỏng
+mọi bản clone khác) — chỉ làm khi chủ dự án yêu cầu rõ.
