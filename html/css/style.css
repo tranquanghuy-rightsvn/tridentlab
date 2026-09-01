@@ -459,7 +459,7 @@ p { margin: 0; }
 .td-tooth-chart {
   position: relative; margin-top: 10px; overflow: hidden; border-radius: 12px;
   aspect-ratio: 3200 / 804;
-  background: #fff url("../images/numerotation-des-dents-dentition-01-CDMM.jpg") no-repeat;
+  background: #fff url("/images/numerotation-des-dents-dentition-01-CDMM.jpg") no-repeat;
   background-size: 100% 100%;
 }
 /* Rows only group the buttons; each tooth is placed against the chart box itself,
