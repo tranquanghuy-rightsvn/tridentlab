@@ -455,12 +455,14 @@ p { margin: 0; }
   .td-account-wrap { padding: 30px; }
   .td-field-row, .td-account-options { grid-template-columns: 1fr; }
   .td-cta { flex-direction: column; align-items: flex-start; padding: 40px; }
-  .td-send-cta { padding: 34px 24px; }
-  .td-send-cta h2 { font-size: 29px; max-width: none; margin-bottom: 24px; }
-  .td-send-cta-points { flex-direction: column; gap: 14px; }
-  .td-send-cta-point { flex-direction: row; align-items: center; text-align: left; padding: 0; gap: 10px; }
-  .td-send-cta-point + .td-send-cta-point::before { display: none; }
-  .td-send-cta-point span { font-size: 15px; }
+  .td-send-cta { padding: 32px 18px; }
+  .td-send-cta h2 { font-size: 26px; max-width: none; margin-bottom: 22px; }
+  /* keep the desktop structure on mobile: 3 points in one row, icon over a
+     two-line centred label, thin dividers between - just tighter */
+  .td-send-cta-points { flex-wrap: nowrap; }
+  .td-send-cta-point { padding: 2px 9px; gap: 7px; }
+  .td-send-cta-point svg { width: 21px; height: 21px; }
+  .td-send-cta-point span { font-size: 11.5px; line-height: 1.3; }
   .td-send-cta-lead { margin-top: 24px; padding-top: 24px; font-size: 15px; }
   .td-download-card { flex-direction: column; text-align: center; }
   .td-footer-top { grid-template-columns: 1fr; }
