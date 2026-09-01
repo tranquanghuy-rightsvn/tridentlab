@@ -294,19 +294,29 @@ p { margin: 0; }
 .td-cta p { color: rgba(255,255,255,0.72); margin-top: 10px; max-width: 420px; font-size: 14.5px; }
 
 /* Send-a-case CTA card (About Us) */
-.td-send-cta { background: linear-gradient(120deg, var(--td-navy-deep), var(--td-navy)); border-radius: 28px; padding: 58px 60px; color: #fff; }
-.td-send-cta > h2 { color: #fff; font-size: 40px; line-height: 1.12; max-width: 16ch; margin-bottom: 36px; }
+/* Desktop: body (heading + points + lead) on the left, the "Send a Case Now"
+   button pulled into its own right-hand column and vertically centred; the
+   security note stays under the body. Collapses to a single column <=900px. */
+.td-send-cta { background: linear-gradient(120deg, var(--td-navy-deep), var(--td-navy)); border-radius: 28px; padding: 58px 60px; color: #fff; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 48px; align-items: center; }
+.td-send-cta-body { grid-column: 1; grid-row: 1; }
+.td-send-cta h2 { color: #fff; font-size: 40px; line-height: 1.12; max-width: 16ch; margin-bottom: 36px; }
 .td-send-cta-points { display: grid; grid-template-columns: repeat(3, 1fr); }
 .td-send-cta-point { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px; padding: 4px 26px; }
 .td-send-cta-point + .td-send-cta-point::before { content: ""; position: absolute; left: 0; top: 4px; bottom: 4px; width: 1px; background: rgba(255,255,255,0.16); }
 .td-send-cta-point svg { width: 30px; height: 30px; color: var(--td-gold); flex-shrink: 0; }
 .td-send-cta-point span { font-size: 15px; line-height: 1.4; color: rgba(255,255,255,0.92); max-width: 18ch; }
 .td-send-cta-lead { margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.14); max-width: 54ch; font-size: 16px; line-height: 1.7; color: rgba(255,255,255,0.7); }
-.td-send-cta-btn { margin-top: 26px; background: #e8c07d; color: var(--td-navy); font-weight: 700; padding: 15px 30px; border-radius: 12px; }
+.td-send-cta-btn { grid-column: 2; grid-row: 1 / span 2; align-self: center; white-space: nowrap; background: #e8c07d; color: var(--td-navy); font-weight: 700; padding: 16px 32px; border-radius: 12px; }
 .td-send-cta-btn:hover { background: #efce97; color: var(--td-navy); }
 .td-send-cta-btn svg { color: var(--td-navy); }
-.td-send-cta-note { margin-top: 18px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.5); }
+.td-send-cta-note { grid-column: 1; grid-row: 2; margin-top: 16px; display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(255,255,255,0.5); }
 .td-send-cta-note svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+@media (max-width: 900px) {
+  .td-send-cta { display: block; padding: 44px 40px; }
+  .td-send-cta-btn { display: flex; width: 100%; justify-content: center; margin-top: 26px; }
+  .td-send-cta-note { margin-top: 16px; }
+}
 
 /* ---------- Contact strip / info ---------- */
 .td-contact-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
@@ -444,13 +454,12 @@ p { margin: 0; }
   .td-field-row, .td-account-options { grid-template-columns: 1fr; }
   .td-cta { flex-direction: column; align-items: flex-start; padding: 40px; }
   .td-send-cta { padding: 34px 24px; }
-  .td-send-cta > h2 { font-size: 29px; max-width: none; margin-bottom: 26px; }
+  .td-send-cta h2 { font-size: 29px; max-width: none; margin-bottom: 26px; }
   .td-send-cta-points { grid-template-columns: 1fr; gap: 20px; }
   .td-send-cta-point { flex-direction: row; text-align: left; align-items: center; padding: 0; }
   .td-send-cta-point + .td-send-cta-point::before { display: none; }
   .td-send-cta-point span { max-width: none; }
   .td-send-cta-lead { margin-top: 24px; padding-top: 24px; font-size: 15px; }
-  .td-send-cta-btn { width: 100%; justify-content: center; }
   .td-download-card { flex-direction: column; text-align: center; }
   .td-footer-top { grid-template-columns: 1fr; }
   .td-footer-bottom { flex-direction: column; align-items: flex-start; }
