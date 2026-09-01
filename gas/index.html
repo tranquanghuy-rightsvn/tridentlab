@@ -4,9 +4,7 @@
     <base target="_top" />
     <meta charset="UTF-8" />
     <title>Trident Dental Lab</title>
-    <style>
-      <?!= include_('css') ?>
-    </style>
+    <?!= include_('css') ?>
   </head>
   <body>
     <div id="fatal-error" hidden></div>
@@ -96,8 +94,6 @@
     <script>
       window.CLIENT_BUILD = '<?= clientBuild ?>';
     </script>
-    <script>
-      <?!= include_('js') ?>
-    </script>
+    <?!= include_('js') ?>
   </body>
 </html>
