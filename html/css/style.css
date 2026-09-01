@@ -152,15 +152,19 @@ p { margin: 0; }
 .td-mobile-nav a.current { color: var(--td-blue); }
 
 /* ---------- Reveal animation (matches tridentlab-five.vercel.app) ---------- */
-.td-reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.7s ease, transform 0.7s ease; }
-.td-reveal.is-visible { opacity: 1; transform: translateY(0); }
+/* Content is fully visible by default (no-JS / crawler safe). The hidden
+   starting state is applied only when JS is available (html.js), so the
+   fade-in is pure progressive enhancement and never blocks rendering. */
+.td-reveal { transition: opacity 0.7s ease, transform 0.7s ease; }
+.js .td-reveal { opacity: 0; transform: translateY(26px); }
+.js .td-reveal.is-visible { opacity: 1; transform: translateY(0); }
 .td-reveal-d1.is-visible { transition-delay: 0.1s; }
 .td-reveal-d2.is-visible { transition-delay: 0.2s; }
 .td-reveal-d3.is-visible { transition-delay: 0.3s; }
 .td-reveal-d4.is-visible { transition-delay: 0.4s; }
 
 @media (prefers-reduced-motion: reduce) {
-  .td-reveal { opacity: 1; transform: none; transition: none; }
+  .td-reveal, .js .td-reveal { opacity: 1; transform: none; transition: none; }
 }
 
 /* ---------- Hero ---------- */
