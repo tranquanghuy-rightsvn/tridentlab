@@ -224,7 +224,11 @@
         <h3>Account Application</h3>
         <p>Please complete the details below &mdash; fields marked * are required.</p>
 
-        <form onsubmit="return false;">
+        <form id="td-open-account-form" data-tdl-form="open-account" novalidate>
+
+          <div class="td-hp" aria-hidden="true">
+            <label>Leave this field empty<input type="text" name="_hp" tabindex="-1" autocomplete="off"></label>
+          </div>
 
           <div class="td-form-section">
             <h4>Practice Details</h4>
@@ -305,6 +309,7 @@
           </div>
 
           <button type="submit" class="td-btn td-btn-solid" style="width:100%; justify-content:center;">Submit Application <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
+          <p class="td-form-status" hidden></p>
         </form>
       </div>
     </div>
@@ -373,5 +378,6 @@
 </footer>
 
 <script src="/js/main.js"></script>
+<script src="/js/forms.js"></script>
 </body>
 </html>

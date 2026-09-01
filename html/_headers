@@ -1,0 +1,9 @@
+# Chặn bot index các trang quản trị (áp cho host đọc _headers: Cloudflare Pages/Workers, Netlify).
+# Nếu deploy bằng Vercel: khai tương đương trong vercel.json với source "/(admin|admin-gas)(/.*)?".
+/admin/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Referrer-Policy: no-referrer
+
+/admin-gas/*
+  X-Robots-Tag: noindex, nofollow, noarchive, nosnippet, noimageindex
+  Referrer-Policy: no-referrer

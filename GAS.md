@@ -60,6 +60,10 @@ khách qua trang này (chỉ xem + xử lý nội bộ).
 - Site tĩnh (domain khác) gọi `fetch('<GAS_EXEC_URL>', { method:'POST', body: JSON.stringify(payload),
   headers: { 'Content-Type': 'text/plain;charset=utf-8' } })` — dùng `text/plain` để né CORS
   preflight (GAS không xử lý OPTIONS).
+  `<GAS_EXEC_URL>` (deploy 2026-09-01) khai 1 chỗ duy nhất ở **`html/js/forms.js`** (biến
+  `ENDPOINT`) + `html/admin/index.html` + `html/admin-gas/index.html`. Đổi deploy → sửa 3 chỗ.
+  Đã nối: `js/forms.js` tự bắt mọi `<form data-tdl-form="...">` (Open Account, Get a Quote);
+  wizard `js/case-wizard.js` gọi `window.tdlPostSubmission('send-case', payload)`.
 - `payload` = `{ type, _hp, ...toàn bộ field của form }`. `type` ∈ `'open-account'` | `'send-case'`
   | `'quote'`. Giá trị `type` lạ → `{ ok:false }`, không lưu.
 - **Honeypot**: field ẩn tên `_hp`. Có giá trị (khác rỗng) → âm thầm trả `{ ok:true }`, KHÔNG
@@ -219,13 +223,17 @@ tự lưu lại — KHÔNG khai tay). Tên sheet / cột CỐ ĐỊNH:
 - Dữ liệu 3 sheet đơn CHỈ nằm trong Google Sheet — không bao giờ ghi ra repo / công khai.
 - Không có GitHub Contents API trong dự án này (không publish gì).
 
-**Trang quản trị (làm sau khi có `<GAS_EXEC_URL>`):**
-| Đường dẫn | Vai trò |
-|---|---|
-| `tridentdentallab.com.au/admin/` | Bản NHÚNG (iframe + cắt 25px thanh cảnh báo Google bằng CSS) — thanh địa chỉ luôn là domain khách |
-| `tridentdentallab.com.au/admin-gas/` | Đường lui — redirect thẳng ra `<GAS_EXEC_URL>`, luôn chạy |
-Bản nhúng tự phát hiện treo >12s → chỉ sang `/admin-gas/`. Cả 2 trang: `noindex`, không khai
-trong `robots.txt`, không có link công khai trỏ tới.
+**Trang quản trị — ĐÃ dựng:**
+| Đường dẫn | File | Vai trò |
+|---|---|---|
+| `/admin/` | `html/admin/index.html` | Bản NHÚNG: iframe + cắt 25px thanh cảnh báo Google bằng CSS — thanh địa chỉ luôn là domain khách. Treo >12s → hiện nút mở `/admin-gas/`. |
+| `/admin-gas/` | `html/admin-gas/index.html` | Đường lui: `location.replace` + `<meta refresh>` thẳng ra `<GAS_EXEC_URL>`. |
+- Cả 2 trang: `<meta robots noindex,...>` + `<meta referrer no-referrer>`. `html/_headers` khai
+  `X-Robots-Tag` cho `/admin/*` + `/admin-gas/*` (Cloudflare/Netlify; Vercel → `vercel.json`).
+- KHÔNG khai `Disallow` cho 2 đường này trong `robots.txt`, KHÔNG link công khai trỏ tới.
+- ⚠️ Đã verify `/admin/` nhúng chạy (hiện màn đăng nhập thật). CHƯA test token `localStorage`
+  trong iframe bên thứ ba có sống sót qua F5 không (Safari hay chặn) — test trước khi bàn giao;
+  nếu phải nhập OTP lại thì bỏ bản nhúng, dùng thẳng `/admin-gas/`.
 
 ## X. Checklist bug phải né (đúc kết từ playbook)
 

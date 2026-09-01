@@ -168,17 +168,66 @@ document.addEventListener("DOMContentLoaded", function () {
     renderFileList(this, document.getElementById("wz-photo-list"));
   });
 
+  var wzStatus = document.getElementById("wz-status");
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!validateStep(currentStepEl())) return;
-    // This site is static with no backend: nothing here is actually
-    // transmitted or stored. Replace this block with a real submission
-    // (fetch to an API, form service, etc.) once a backend exists.
-    var ref = generateCaseRef();
-    form.hidden = true;
-    document.getElementById("td-wizard-progress").hidden = true;
-    confirmText.textContent = "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
-    confirm.hidden = false;
+
+    var submitBtn = form.querySelector('[type="submit"]');
+    var hp = document.getElementById("wz-hp");
+    var sortedTeeth = selectedTeeth.slice().sort(function (a, b) { return a - b; });
+    var payload = {
+      _hp: hp ? hp.value : "",
+      dentist_name: fieldValue("wz-dentist-name"),
+      practice: fieldValue("wz-practice"),
+      email: fieldValue("wz-email"),
+      phone: fieldValue("wz-phone"),
+      patient_name: fieldValue("wz-patient-name"),
+      patient_gender: fieldValue("wz-patient-gender"),
+      patient_age: fieldValue("wz-patient-age"),
+      restoration: fieldValue("wz-restoration"),
+      material: fieldValue("wz-material"),
+      shade: fieldValue("wz-shade"),
+      teeth: sortedTeeth.map(String),
+      instructions: fieldValue("wz-instructions"),
+      scan_files: fileNames(document.getElementById("wz-scan-files")),
+      photo_files: fileNames(document.getElementById("wz-photo-files")),
+      due_date: fieldValue("wz-due-date"),
+    };
+
+    if (wzStatus) wzStatus.hidden = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.dataset.label = submitBtn.textContent;
+      submitBtn.textContent = "Đang gửi…";
+    }
+
+    var send = window.tdlPostSubmission
+      ? window.tdlPostSubmission("send-case", payload)
+      : Promise.resolve({ ok: false, error: "config" });
+
+    send.then(function (res) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = submitBtn.dataset.label || "Submit Case";
+      }
+      if (res && res.ok) {
+        var ref = generateCaseRef();
+        form.hidden = true;
+        document.getElementById("td-wizard-progress").hidden = true;
+        confirmText.textContent =
+          "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
+        confirm.hidden = false;
+      } else if (wzStatus) {
+        wzStatus.hidden = false;
+        wzStatus.className = "td-form-status is-err";
+        wzStatus.textContent =
+          res && res.error === "network"
+            ? "Không gửi được do kết nối. Vui lòng thử lại."
+            : (res && res.error) || "Không gửi được, vui lòng thử lại sau.";
+      }
+    });
   });
 
   buildToothChart();

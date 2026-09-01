@@ -587,3 +587,9 @@ p { margin: 0; }
   .td-wizard-progress li span { font-size: 16px; }
   .td-wizard-summary { grid-template-columns: 1fr; row-gap: 4px; }
 }
+
+/* Public form submit (Open Account / Send a Case / Get a Quote -> admin) */
+.td-hp { position: absolute !important; left: -9999px !important; width: 1px; height: 1px; overflow: hidden; }
+.td-form-status { margin-top: 14px; font-size: 13.5px; line-height: 1.55; padding: 10px 14px; border-radius: 10px; }
+.td-form-status.is-ok { background: #dcfce7; color: #166534; }
+.td-form-status.is-err { background: #fee2e2; color: #991b1b; }
