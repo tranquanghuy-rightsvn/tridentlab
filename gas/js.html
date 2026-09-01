@@ -1,0 +1,469 @@
+/* Trident Dental Lab - trang quan tri (client). */
+(function () {
+  'use strict';
+
+  var BUILD = window.CLIENT_BUILD || 'dev';
+  console.log('[TDL admin] client build:', BUILD);
+
+  var TOKEN_KEY = 'tdl_admin_token'; // KHONG gan hau to build
+  var BOOT_KEY = 'tdl_boot_' + BUILD;
+  var TAB_KEY = 'tdl_tab_' + BUILD;
+
+  var TYPES = ['open-account', 'send-case', 'quote'];
+  var TYPE_STATE = { 'open-account': 'openAccount', 'send-case': 'sendCase', quote: 'quotes' };
+  var TYPE_TITLE = { 'open-account': 'Đơn mở tài khoản', 'send-case': 'Đơn gửi ca', quote: 'Yêu cầu báo giá' };
+  var STATUSES = ['Mới', 'Đang xử lý', 'Đã xử lý', 'Đã huỷ'];
+  var STATUS_NEW = STATUSES[0];
+  var STATUS_CLASS = { 'Mới': 's-moi', 'Đang xử lý': 's-dang', 'Đã xử lý': 's-xong', 'Đã huỷ': 's-huy' };
+
+  var STATE = null; // { me, appHtml, openAccount, sendCase, quotes, users }
+  var FILTER = { 'open-account': 'all', 'send-case': 'all', quote: 'all' };
+  var LOGIN_EMAIL = '';
+  var modalOpen = false;
+  var detailCur = null;
+
+  // ---------- helpers ----------
+  function $(id) { return document.getElementById(id); }
+  function el(sel, root) { return (root || document).querySelector(sel); }
+  function els(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function purgeStaleCaches() {
+    try {
+      for (var i = localStorage.length - 1; i >= 0; i--) {
+        var k = localStorage.key(i);
+        if (k === TOKEN_KEY) continue;
+        if (/^tdl_(boot|tab)_/.test(k) && k.indexOf('_' + BUILD) === -1) localStorage.removeItem(k);
+      }
+    } catch (e) {}
+  }
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  function getToken() { try { return localStorage.getItem(TOKEN_KEY) || ''; } catch (e) { return ''; } }
+  function setToken(t) { try { if (t) localStorage.setItem(TOKEN_KEY, t); else localStorage.removeItem(TOKEN_KEY); } catch (e) {} }
+  function clearCache() { try { localStorage.removeItem(BOOT_KEY); localStorage.removeItem(TAB_KEY); } catch (e) {} }
+
+  function gasRun(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return new Promise(function (resolve, reject) {
+      var runner = google.script.run
+        .withSuccessHandler(resolve)
+        .withFailureHandler(function (err) { reject(err); });
+      runner[fn].apply(runner, args);
+    });
+  }
+
+  function withLoading(btn, asyncFn) {
+    if (btn) { btn.classList.add('is-loading'); btn.disabled = true; }
+    return Promise.resolve()
+      .then(asyncFn)
+      .finally(function () {
+        if (btn) { btn.classList.remove('is-loading'); btn.disabled = false; }
+      });
+  }
+
+  function fmtDate(iso) {
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return String(iso || '');
+    var p = function (n) { return (n < 10 ? '0' : '') + n; };
+    return p(d.getDate()) + '/' + p(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + p(d.getHours()) + ':' + p(d.getMinutes());
+  }
+
+  // ---------- modals ----------
+  function showConfirm(message, opts) {
+    opts = opts || {};
+    modalOpen = true;
+    $('confirm-msg').textContent = message;
+    $('confirm-note').textContent = opts.note || '';
+    var ok = $('confirm-ok');
+    ok.textContent = opts.okText || 'Đồng ý';
+    ok.className = 'btn danger';
+    $('confirm-overlay').classList.remove('hidden');
+    return new Promise(function (resolve) {
+      function done(v) {
+        $('confirm-overlay').classList.add('hidden');
+        ok.removeEventListener('click', onOk);
+        $('confirm-cancel').removeEventListener('click', onCancel);
+        modalOpen = false;
+        resolve(v);
+      }
+      function onOk() { done(true); }
+      function onCancel() { done(false); }
+      ok.addEventListener('click', onOk);
+      $('confirm-cancel').addEventListener('click', onCancel);
+    });
+  }
+
+  function showAlert(message, type, note) {
+    modalOpen = true;
+    $('alert-box').className =
+      'modal confirm-box ' + (type === 'error' ? 'alert-message-error' : type === 'success' ? 'alert-message-success' : '');
+    $('alert-title').textContent = type === 'error' ? 'Có lỗi' : 'Thông báo';
+    $('alert-msg').textContent = message;
+    $('alert-note').textContent = note || '';
+    $('alert-overlay').classList.remove('hidden');
+    return new Promise(function (resolve) {
+      function done() {
+        $('alert-overlay').classList.add('hidden');
+        $('alert-close').removeEventListener('click', done);
+        modalOpen = false;
+        resolve();
+      }
+      $('alert-close').addEventListener('click', done);
+    });
+  }
+
+  function fatal(msg) {
+    var b = $('fatal-error');
+    b.hidden = false;
+    b.textContent = 'Không tải được trang quản trị.\n' + msg;
+  }
+
+  // ================================================================
+  //  LOGIN
+  // ================================================================
+  function bindLogin() {
+    $('btn-send-code').addEventListener('click', function () {
+      var email = ($('in-email').value || '').trim();
+      $('auth-err').textContent = '';
+      $('auth-ok').textContent = '';
+      if (!email || email.indexOf('@') === -1) { $('auth-err').textContent = 'Email không hợp lệ.'; return; }
+      withLoading(this, function () {
+        return gasRun('requestOtp', email).then(function (r) {
+          if (!r || !r.ok) { $('auth-err').textContent = (r && r.error) || 'Không gửi được mã.'; return; }
+          LOGIN_EMAIL = email;
+          $('step-email').classList.add('hidden');
+          $('step-otp').classList.remove('hidden');
+          $('auth-ok').textContent = 'Đã gửi mã tới ' + email;
+          $('in-otp').focus();
+        });
+      }).catch(function (e) { $('auth-err').textContent = String((e && e.message) || e); });
+    });
+
+    $('btn-verify').addEventListener('click', function () {
+      var code = ($('in-otp').value || '').trim();
+      $('auth-err').textContent = '';
+      if (!code) { $('auth-err').textContent = 'Nhập mã đăng nhập.'; return; }
+      withLoading(this, function () {
+        return gasRun('verifyOtp', LOGIN_EMAIL, code).then(function (r) {
+          if (!r || !r.ok) { $('auth-err').textContent = (r && r.error) || 'Mã không đúng.'; return; }
+          setToken(r.token);
+          return liveBoot(true);
+        });
+      }).catch(function (e) { $('auth-err').textContent = String((e && e.message) || e); });
+    });
+
+    $('btn-back').addEventListener('click', function () {
+      $('step-otp').classList.add('hidden');
+      $('step-email').classList.remove('hidden');
+      $('auth-err').textContent = '';
+      $('auth-ok').textContent = '';
+    });
+
+    $('in-otp').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('btn-verify').click(); });
+    $('in-email').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('btn-send-code').click(); });
+  }
+
+  function showLogin() {
+    STATE = null;
+    $('app-root').classList.add('hidden');
+    $('app-root').innerHTML = '';
+    $('auth').classList.remove('hidden');
+    $('step-otp').classList.add('hidden');
+    $('step-email').classList.remove('hidden');
+  }
+
+  // ================================================================
+  //  BOOT / RENDER
+  // ================================================================
+  function init() {
+    purgeStaleCaches();
+    bindLogin();
+    if (!getToken()) { showLogin(); return; }
+
+    var cached = lsGet(BOOT_KEY);
+    if (cached && cached.me && cached.me.role) mountApp(cached);
+    liveBoot(false).catch(function (e) {
+      if (!STATE) fatal(String((e && e.message) || e));
+    });
+  }
+
+  function liveBoot(fromLogin) {
+    if (!getToken()) { showLogin(); return Promise.resolve(); }
+    return gasRun('boot', getToken()).then(function (data) {
+      if (!data || !data.me || !data.me.role) {
+        setToken(''); clearCache(); showLogin();
+        if (fromLogin) $('auth-err').textContent = 'Không vào được. Thử lại.';
+        return;
+      }
+      lsSet(BOOT_KEY, data);
+      if (!STATE || STATE.appHtml !== data.appHtml) mountApp(data);
+      else hydrate(data);
+    });
+  }
+
+  /** Nap markup + gan su kien 1 lan, roi hydrate. */
+  function mountApp(data) {
+    STATE = data;
+    $('auth').classList.add('hidden');
+    $('app-root').classList.remove('hidden');
+    $('app-root').innerHTML = data.appHtml;
+    wireApp();
+    hydrate(data, true);
+  }
+
+  /** Cap nhat du lieu + ve lai bang, KHONG dung toi markup/tab. */
+  function hydrate(data, isMount) {
+    if (modalOpen && !isMount) { STATE = data; return; } // dang mo modal -> khong ve de
+    STATE = data;
+
+    $('who-email').textContent = data.me.email;
+    var rt = $('who-role');
+    rt.textContent = data.me.role;
+    rt.className = 'role-tag' + (data.me.role === 'root' ? ' root' : '');
+    var navU = $('nav-users');
+    if (navU) navU.hidden = data.me.role !== 'root';
+
+    TYPES.forEach(renderSubmissions);
+    refreshCounts();
+    renderUsers();
+
+    if (isMount) {
+      var savedTab = lsGet(TAB_KEY) || 'open-account';
+      activateTab(savedTab);
+    }
+  }
+
+  function wireApp() {
+    els('#nav button').forEach(function (b) {
+      b.addEventListener('click', function () { switchTab(b.getAttribute('data-tab')); });
+    });
+    $('btn-logout').addEventListener('click', function () {
+      var tk = getToken();
+      setToken(''); clearCache();
+      gasRun('logout', tk).catch(function () {});
+      showLogin();
+    });
+    els('.chips').forEach(function (box) {
+      var type = box.getAttribute('data-chips');
+      var opts = [['all', 'Tất cả']].concat(STATUSES.map(function (s) { return [s, s]; }));
+      box.innerHTML = opts
+        .map(function (o) {
+          return '<button class="chip' + (FILTER[type] === o[0] ? ' active' : '') + '" data-v="' + esc(o[0]) + '">' + esc(o[1]) + '</button>';
+        })
+        .join('');
+      box.addEventListener('click', function (e) {
+        var btn = e.target.closest('.chip');
+        if (!btn) return;
+        FILTER[type] = btn.getAttribute('data-v');
+        els('.chip', box).forEach(function (c) { c.classList.toggle('active', c === btn); });
+        renderSubmissions(type);
+      });
+    });
+    TYPES.forEach(function (type) {
+      var tb = el('[data-rows="' + type + '"]');
+      if (tb) tb.addEventListener('click', function (e) {
+        var tr = e.target.closest('tr[data-id]');
+        if (tr) openDetail(type, tr.getAttribute('data-id'));
+      });
+    });
+    var addBtn = $('btn-add-user');
+    if (addBtn) addBtn.addEventListener('click', function () { onAddUser(this); });
+    var uTb = el('[data-rows="users"]');
+    if (uTb) uTb.addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-del]');
+      if (btn) onDeleteUser(btn.getAttribute('data-del'), btn);
+    });
+  }
+
+  function activateTab(tab) {
+    lsSet(TAB_KEY, tab);
+    els('#nav button').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-tab') === tab); });
+    els('.panel').forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-panel') === tab); });
+  }
+
+  function switchTab(tab) {
+    activateTab(tab);
+    if (getToken()) {
+      gasRun('boot', getToken()).then(function (d) {
+        if (d && d.me && d.me.role) { lsSet(BOOT_KEY, d); hydrate(d); }
+      }).catch(function (e) { console.warn('revalidate', e); });
+    }
+  }
+
+  // ================================================================
+  //  SUBMISSIONS
+  // ================================================================
+  function refreshCounts() {
+    TYPES.forEach(function (t) {
+      var arr = (STATE && STATE[TYPE_STATE[t]]) || [];
+      var n = arr.filter(function (x) { return x.status === STATUS_NEW; }).length;
+      var c = $('cnt-' + t);
+      if (c) { c.textContent = n || ''; c.style.display = n ? '' : 'none'; }
+    });
+  }
+
+  function renderSubmissions(type) {
+    var tb = el('[data-rows="' + type + '"]');
+    if (!tb || !STATE) return;
+    var list = STATE[TYPE_STATE[type]] || [];
+    var f = FILTER[type];
+    if (f !== 'all') list = list.filter(function (x) { return x.status === f; });
+    if (!list.length) {
+      tb.innerHTML = '<tr><td colspan="4"><div class="empty">Chưa có yêu cầu nào.</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = list
+      .map(function (x) {
+        var contact = esc(x.email || '') + (x.phone ? '<span class="cell-sub">' + esc(x.phone) + '</span>' : '');
+        return (
+          '<tr data-id="' + esc(x.id) + '">' +
+          '<td>' + esc(fmtDate(x.created_at)) + '</td>' +
+          '<td>' + (contact || '<span class="cell-sub">—</span>') + '</td>' +
+          '<td>' + esc(x.name || '—') + '</td>' +
+          '<td><span class="pill ' + (STATUS_CLASS[x.status] || '') + '">' + esc(x.status) + '</span></td>' +
+          '</tr>'
+        );
+      })
+      .join('');
+  }
+
+  function openDetail(type, id) {
+    var list = (STATE && STATE[TYPE_STATE[type]]) || [];
+    var rec = list.filter(function (x) { return x.id === id; })[0];
+    if (!rec) return;
+    detailCur = { type: type, id: id };
+    modalOpen = true;
+
+    $('detail-title').textContent = TYPE_TITLE[type];
+    $('detail-meta').textContent = 'Gửi lúc ' + fmtDate(rec.created_at) + ' · Mã ' + rec.id;
+
+    var sel = $('detail-status');
+    sel.innerHTML = STATUSES.map(function (s) { return '<option' + (s === rec.status ? ' selected' : '') + '>' + esc(s) + '</option>'; }).join('');
+    sel.onchange = function () {
+      var v = sel.value;
+      var prev = rec.status;
+      gasRun('setStatus', getToken(), type, id, v)
+        .then(function () {
+          rec.status = v;
+          lsSet(BOOT_KEY, STATE);
+          renderSubmissions(type);
+          refreshCounts();
+        })
+        .catch(function (e) { sel.value = prev; showAlert(String((e && e.message) || e), 'error'); });
+    };
+
+    var kv = $('detail-kv');
+    var d = rec.data || {};
+    var keys = Object.keys(d);
+    if (!keys.length) {
+      kv.innerHTML = '<tr><td class="v" colspan="2" style="color:var(--ink-soft)">Không có chi tiết.</td></tr>';
+    } else {
+      kv.innerHTML = keys
+        .map(function (k) {
+          var v = d[k];
+          if (v && typeof v === 'object') v = JSON.stringify(v, null, 2);
+          return '<tr><td class="k">' + esc(k) + '</td><td class="v">' + esc(v) + '</td></tr>';
+        })
+        .join('');
+    }
+    $('detail-overlay').classList.remove('hidden');
+  }
+
+  function closeDetail() {
+    $('detail-overlay').classList.add('hidden');
+    detailCur = null;
+    modalOpen = false;
+    if (STATE) hydrate(STATE); // ve lai neu co du lieu moi den trong luc mo modal
+  }
+
+  function bindDetailModal() {
+    $('detail-x').addEventListener('click', closeDetail);
+    $('detail-close').addEventListener('click', closeDetail);
+    $('detail-delete').addEventListener('click', function () {
+      if (!detailCur) return;
+      var cur = detailCur;
+      var btn = this;
+      showConfirm('Xoá yêu cầu này? Không thể hoàn tác.', { okText: 'Xoá' }).then(function (yes) {
+        if (!yes) return;
+        withLoading(btn, function () {
+          return gasRun('deleteSubmission', getToken(), cur.type, cur.id).then(function () {
+            STATE[TYPE_STATE[cur.type]] = (STATE[TYPE_STATE[cur.type]] || []).filter(function (x) { return x.id !== cur.id; });
+            lsSet(BOOT_KEY, STATE);
+            renderSubmissions(cur.type);
+            refreshCounts();
+            closeDetail();
+            return showAlert('Đã xoá yêu cầu.', 'success');
+          });
+        }).catch(function (e) { showAlert(String((e && e.message) || e), 'error'); });
+      });
+    });
+  }
+
+  // ================================================================
+  //  USERS
+  // ================================================================
+  function renderUsers() {
+    var tb = el('[data-rows="users"]');
+    if (!tb || !STATE) return;
+    var list = (STATE.users || []).slice().sort(function (a, b) { return a.email < b.email ? -1 : 1; });
+    if (!list.length) {
+      tb.innerHTML = '<tr><td colspan="3"><div class="empty">Chưa có người dùng nào ngoài quản trị viên gốc.</div></td></tr>';
+      return;
+    }
+    var meEmail = STATE.me.email;
+    tb.innerHTML = list
+      .map(function (u) {
+        var isMe = u.email === meEmail;
+        var canDel = u.role !== 'root' && !isMe;
+        return (
+          '<tr>' +
+          '<td>' + esc(u.email) + (isMe ? ' <span style="color:var(--ink-soft)">(bạn)</span>' : '') + '</td>' +
+          '<td><span class="role-tag' + (u.role === 'root' ? ' root' : '') + '">' + esc(u.role) + '</span></td>' +
+          '<td style="text-align:right">' +
+          (canDel ? '<button class="btn danger small" data-del="' + esc(u.email) + '">Xoá</button>' : '<span style="color:var(--ink-soft)">—</span>') +
+          '</td></tr>'
+        );
+      })
+      .join('');
+  }
+
+  function onAddUser(btn) {
+    var email = ($('u-email').value || '').trim();
+    var role = $('u-role').value;
+    if (!email || email.indexOf('@') === -1) { showAlert('Email không hợp lệ.', 'error'); return; }
+    withLoading(btn, function () {
+      return gasRun('addUser', getToken(), email, role)
+        .then(function () { $('u-email').value = ''; return refreshUsers(); })
+        .then(function () { return showAlert('Đã thêm người dùng.', 'success'); });
+    }).catch(function (e) { showAlert(String((e && e.message) || e), 'error'); });
+  }
+
+  function onDeleteUser(email, btn) {
+    showConfirm('Xoá quyền truy cập của "' + email + '"?', { okText: 'Xoá' }).then(function (yes) {
+      if (!yes) return;
+      withLoading(btn, function () {
+        return gasRun('deleteUser', getToken(), email).then(function () { return refreshUsers(); });
+      })
+        .then(function () { return showAlert('Đã xoá người dùng.', 'success'); })
+        .catch(function (e) { showAlert(String((e && e.message) || e), 'error'); });
+    });
+  }
+
+  function refreshUsers() {
+    return gasRun('listUsers', getToken()).then(function (list) {
+      STATE.users = list || [];
+      lsSet(BOOT_KEY, STATE);
+      renderUsers();
+    });
+  }
+
+  // ---------- go ----------
+  document.addEventListener('DOMContentLoaded', function () {
+    bindDetailModal();
+    try { init(); } catch (e) { fatal(String((e && e.message) || e)); }
+  });
+})();
