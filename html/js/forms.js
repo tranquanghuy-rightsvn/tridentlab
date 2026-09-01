@@ -1,12 +1,12 @@
-/* Trident Dental Lab — gửi 3 biểu mẫu công khai về trang quản trị.
- * Endpoint là web app riêng; đổi URL 1 chỗ duy nhất ở đây. */
+/* Trident Dental Lab — send the 3 public forms to the back office.
+ * The endpoint is a separate web app; change the URL in this one place. */
 (function () {
   "use strict";
 
   var ENDPOINT =
     "https://script.google.com/macros/s/AKfycbxeDVsRryUtxXksfy08UX2HowWjKfJjAuaJ4inwNNJpO5Qnnxj31j7quhrsnyFuRBszAg/exec";
 
-  // text/plain => request "đơn giản", trình duyệt không gửi preflight OPTIONS.
+  // text/plain keeps it a "simple request" so the browser skips the CORS preflight OPTIONS.
   function postSubmission(type, data) {
     var payload = { type: type };
     Object.keys(data).forEach(function (k) {
@@ -33,7 +33,7 @@
     box.className = "td-form-status is-" + kind;
   }
 
-  // Tự nối mọi <form data-tdl-form="<type>"> — gom field theo name, có honeypot _hp.
+  // Auto-wire every <form data-tdl-form="<type>"> — collect fields by name, honeypot _hp.
   function wireGenericForms() {
     var forms = document.querySelectorAll("form[data-tdl-form]");
     Array.prototype.forEach.call(forms, function (form) {
@@ -53,7 +53,7 @@
         });
 
         var label = btn ? btn.textContent.trim() : "";
-        if (btn) { btn.disabled = true; btn.dataset.label = label; btn.textContent = "Đang gửi…"; }
+        if (btn) { btn.disabled = true; btn.dataset.label = label; btn.textContent = "Sending…"; }
         setStatus(status, "", "pending");
         status && (status.hidden = true);
 
@@ -63,15 +63,15 @@
             form.reset();
             setStatus(
               status,
-              "Đã nhận. Đội ngũ Trident sẽ liên hệ lại sớm.",
+              "Thank you — your details have been received. The Trident team will be in touch shortly.",
               "ok"
             );
           } else {
             setStatus(
               status,
               (res && res.error === "network")
-                ? "Không gửi được do kết nối. Vui lòng thử lại."
-                : (res && res.error) || "Không gửi được, vui lòng thử lại sau.",
+                ? "Couldn't send — please check your connection and try again."
+                : (res && res.error) || "Something went wrong. Please try again later.",
               "err"
             );
           }

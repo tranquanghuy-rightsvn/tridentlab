@@ -69,7 +69,9 @@ khách qua trang này (chỉ xem + xử lý nội bộ).
 - **Honeypot**: field ẩn tên `_hp`. Có giá trị (khác rỗng) → âm thầm trả `{ ok:true }`, KHÔNG
   lưu, KHÔNG gửi mail (không "dạy" bot biết đã bị chặn).
 - **Rate-limit**: 30 giây/lần theo khoá `type + '|' + (email || phone)` qua `CacheService`.
-  Quá nhanh → `{ ok:false, error:'Bạn gửi quá nhanh, thử lại sau ít phút.' }`.
+  Quá nhanh → `{ ok:false, error:'You are submitting too quickly. Please try again in a few minutes.' }`.
+  ⚠️ Mọi chuỗi `error` trả về cho form công khai phải bằng **tiếng Anh** (site trang chính là
+  tiếng Anh) — `handlePublicSubmission_` + `doPost` catch. Chuỗi OTP/đăng nhập/nội bộ vẫn tiếng Việt.
 - Ghi vào đúng sheet của `type` (mục IX). `LockService.getScriptLock()` bọc thao tác ghi
   (tránh 2 request ghi đè số dòng nhau).
 - **KHÔNG bao giờ ghi các đơn này lên repo GitHub** — chứa PII khách hàng (tên nha sĩ, tên

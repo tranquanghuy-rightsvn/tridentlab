@@ -200,7 +200,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.dataset.label = submitBtn.textContent;
-      submitBtn.textContent = "Đang gửi…";
+      submitBtn.textContent = "Sending…";
     }
 
     var send = window.tdlPostSubmission
@@ -224,8 +224,8 @@ document.addEventListener("DOMContentLoaded", function () {
         wzStatus.className = "td-form-status is-err";
         wzStatus.textContent =
           res && res.error === "network"
-            ? "Không gửi được do kết nối. Vui lòng thử lại."
-            : (res && res.error) || "Không gửi được, vui lòng thử lại sau.";
+            ? "Couldn't send — please check your connection and try again."
+            : (res && res.error) || "Something went wrong. Please try again later.";
       }
     });
   });
