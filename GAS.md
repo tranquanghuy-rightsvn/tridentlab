@@ -138,26 +138,47 @@ thì upload file lỗi "You do not have permission".
 
 ### II.4. Gửi email báo
 
-- `open-account` / `quote`: gửi mail NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
-  `send-case`: gửi **ĐÚNG 1 email** ở bước `submission-finish` (mục II.3), có khoá `data._notified`
+Mỗi đơn phát sinh **2 email**: (a) báo nội bộ tới `NOTIFY_EMAIL`, (b) xác nhận HTML tới khách
+(mục II.4b). Cả 2 kèm **mã tham chiếu** `ref` (`TDL-` + 6 ký tự, `newRef_()`), sinh ở
+`handlePublicSubmission_`, lưu trong `data.ref`, và trả về client (`res.ref`) để hiện trên UI
++ trùng khớp với mã trong email.
+
+- `open-account` / `quote`: gửi cả 2 mail NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
+  `send-case`: gửi cả 2 ở bước `submission-finish` (mục II.3), có khoá `data._notified`
   chặn mail trùng khi client retry. KHÔNG gửi mail ở bước `send-case` ban đầu.
-- Gửi qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`** (Script Property, mục XI). KHÔNG có địa chỉ
+- Mail nội bộ gửi qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`** (Script Property, mục XI). KHÔNG có địa chỉ
   mặc định. Chưa khai `NOTIFY_EMAIL` = không gửi mail, **đơn vẫn lưu Sheet bình thường**
   (`requireCfg_('NOTIFY_EMAIL')` trong `try` của `notifyNewSubmission_`; hàm trả `false` khi
   bỏ qua — `finishSubmission_` trả lại `emailed:false` cho client để debug).
   → **Nếu Đại ca báo "email đích chưa nhận được": việc đầu tiên là kiểm Script Property
   `NOTIFY_EMAIL` đã điền chưa** (nguyên nhân #1). Sau đó tới quota Gmail 100 mail/ngày.
-- Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " - " + <name>`. Nhãn loại: `Mo tai khoan`
-  / `Gui ca` / `Yeu cau bao gia` (giữ tiếng Việt không dấu — mail nội bộ).
+- Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " - " + <ref> + " - " + <name>`. Nhãn loại:
+  `Mo tai khoan` / `Gui ca` / `Yeu cau bao gia` (giữ tiếng Việt không dấu — mail nội bộ).
+  Thân mail có thêm dòng `Ma tham chieu: <ref>`.
 - Nội dung: danh sách `key: value` của `data` + `Thoi gian` + `Ma don`. Text thuần, không HTML.
   - Bỏ mọi key bắt đầu bằng `_` (vd `_notified`).
   - `scan_files` / `photo_files`: in **link Drive ngay trên dòng đó**
     (`scan_files: https://drive.google.com/…`, nhiều file nối bằng `, `); rỗng → `(none)`.
   - `files_folder`: in link thư mục Drive (chỉ `NOTIFY_EMAIL` mở được).
   - KHÔNG còn khối "File dinh kem" riêng — link nằm luôn trong dòng field.
-- ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập. Ngày cao điểm chạm mốc → OTP
-  không gửi được. Lúc đó cân nhắc tách tài khoản Gmail riêng cho OTP, hoặc chuyển kênh báo
-  form sang Telegram (xem `hosting-and-quotas.md`).
+- ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập **và email khách (II.4b)** — giờ mỗi
+  đơn tốn 2 mail. Ngày cao điểm chạm mốc → OTP không gửi được. Lúc đó cân nhắc tách tài khoản
+  Gmail riêng cho OTP, hoặc chuyển kênh báo nội bộ sang Telegram (xem `hosting-and-quotas.md`).
+
+### II.4b. Email xác nhận HTML gửi cho khách
+
+- Template: **`gas/mail-customer.html`** (file HTML riêng, render bằng
+  `HtmlService.createTemplateFromFile('mail-customer')`, truyền `tpl.data`). Bố cục email-safe:
+  bảng lồng + inline style, header nền navy `#0b2545` + logo trắng
+  `https://tridentdentallab.com.au/images/logo-mark-white.png`, vạch vàng `#c79a3e`, thẻ chi tiết,
+  mục "What happens next", footer navy. Có bản `body` text thuần kèm theo.
+- `notifyCustomer_(type, rec, fields)`: chỉ gửi khi `rec.email` (hoặc `fields.email`) là email hợp lệ;
+  bọc `try/catch` — lỗi email khách KHÔNG làm hỏng việc lưu đơn. `name: 'Trident Dental Lab'`,
+  `replyTo: CONTACT_FALLBACK` (`cases.thetridentlab@gmail.com`).
+- Nội dung theo loại đơn do `customerEmailData_` dựng (`heading` / `intro` / `rows[]` / `steps[]`),
+  toàn tiếng Anh. Giá trị field của khách đi qua `<?= ?>` nên được escape sẵn.
+- ⚠️ Địa chỉ **From** vẫn là Gmail chạy script; muốn hiện `no-reply@tridentdentallab.com.au` thì
+  chủ tài khoản phải cấu hình "Send mail as" trong Gmail (ngoài phạm vi agent).
 
 ## III. Trang quản trị — danh sách & chi tiết đơn
 

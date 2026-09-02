@@ -63,7 +63,9 @@
             form.reset();
             setStatus(
               status,
-              "Thank you — your details have been received. The Trident team will be in touch shortly.",
+              "Thank you — your details have been received" +
+                (res.ref ? " (reference " + res.ref + ")" : "") +
+                ". A confirmation email is on its way to you, and the Trident team will be in touch shortly.",
               "ok"
             );
           } else {

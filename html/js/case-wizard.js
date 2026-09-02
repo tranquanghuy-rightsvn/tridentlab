@@ -253,6 +253,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
       var caseId = res.id;
+      var caseRef = res.ref || generateCaseRef();
       var scanLinks = [];
       var photoLinks = [];
       var doneNames = [];  // dòng trạng thái đang chạy trên form
@@ -320,19 +321,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
       function done() {
         restoreBtn();
-        var ref = generateCaseRef();
+        var ref = caseRef;
         var okCount = scanLinks.length + photoLinks.length;
 
         var line;
         if (okCount && !failed.length && !tooBig.length) {
           line =
             "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
-            " uploaded successfully. Our team will confirm by email and keep you updated at every stage.";
+            " uploaded successfully. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
         } else {
           line =
-            "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
+            "Case " + ref + " has been received. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
           if (okCount) line = "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
-            " received. Our team will confirm by email and keep you updated at every stage.";
+            " received. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
         }
         if (failed.length || tooBig.length) {
           var names = failed.concat(
