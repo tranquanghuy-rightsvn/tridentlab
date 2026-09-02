@@ -99,24 +99,50 @@ Schema cố định 7 cột cho cả 3 sheet, KHÔNG tách cột theo từng fie
   render `data` thành bảng key → value ở phần chi tiết. Nhờ vậy form thêm/bớt field không cần
   đổi schema Sheet hay code CMS.
 
-### II.3. Field wizard "Send a Case" có file đính kèm
+### II.3. File đính kèm "Send a Case" — upload vào Google Drive, CHỈ NOTIFY_EMAIL xem được
 
-Wizard `/prescription-form/` cho chọn file scan (STL/PLY/OBJ) + ảnh. **[TẠM — xác nhận lại]**:
-bản đầu KHÔNG upload file lên server (site đang là tĩnh, chưa có backend nhận file lớn). Client
-chỉ gửi **danh sách TÊN file** (`scan_files`, `photo_files` = mảng tên) trong `data`, kèm dòng
-nhắc khách "gửi file qua email `cases.thetridentlab@gmail.com`" như hiện tại. Khi cần nhận file
-thật → chốt nơi lưu (Drive?) rồi làm sau.
+Wizard `/prescription-form/` cho chọn file scan (STL/PLY/OBJ) + ảnh. Luồng (client
+`js/case-wizard.js` + server `saveCaseFile_`/`finishSubmission_`):
+
+1. Client POST `type:'send-case'` (metadata) → server lưu Sheet, **chưa gửi mail**, trả `{ok, id}`.
+   Trong `data` vẫn có `scan_files`/`photo_files` = mảng TÊN file (đối chiếu ý định khách gửi).
+2. Với mỗi file ≤ **20 MB** (`MAX_FILE_BYTES`, khớp `MAX_UPLOAD_BYTES` client): client đọc
+   base64 → POST `type:'submission-file' {id, name, mimeType, dataB64}` → server
+   `saveCaseFile_`: `Utilities.base64Decode` → `DriveApp` tạo file trong thư mục
+   `Trident Dental Lab - Case Files/case-<id>/`. Thư mục + file đều
+   `setSharing(PRIVATE, NONE)` rồi `addViewer(NOTIFY_EMAIL)` → **chỉ chủ script + NOTIFY_EMAIL
+   xem được**. Trả `{ok, url}`.
+   File > 20 MB: client KHÔNG upload, hiện dòng nhắc khách email tới
+   `cases.thetridentlab@gmail.com` (base64 qua `doPost` không kham nổi file lớn — GAS giới hạn
+   payload ~50 MB + 6 phút runtime; 20 MB là mức an toàn).
+3. Client POST `type:'submission-finish' {id}` → `finishSubmission_`: liệt kê file trong
+   `case-<id>/`, gắn `data.uploaded_files` + `data.files_folder` vào đơn, **rồi mới gửi 1 email**
+   qua `notifyNewSubmission_(... , { folderUrl, links })` — thân mail có link thư mục + từng file.
+4. UI: đang upload hiện "Uploading file X of Y…"; xong hiện màn xác nhận
+   *"Case <ref> and N files uploaded successfully…"* (tiếng Anh). File lỗi/quá cỡ → thêm dòng
+   *"…please email them to cases.thetridentlab@gmail.com: a, b."*
+
+Script Property mới: `CASE_FILES_FOLDER_ID` — KHÔNG khai tay, `caseParentFolder_` tự tạo thư
+mục gốc lần đầu và tự lưu id.
+
+⚠️ Thêm `DriveApp` = **scope mới**. Sau khi dán lại `Code.js` + New version, chủ script phải
+mở editor **chạy 1 hàm bất kỳ** để Google hỏi cấp quyền Drive (playbook gotcha #5) — không làm
+thì upload file lỗi "You do not have permission".
 
 ### II.4. Gửi email báo
 
-- Sau khi lưu Sheet thành công → gửi 1 email qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`**
-  (Script Property, mục XI). KHÔNG có địa chỉ mặc định trong code. Chưa khai `NOTIFY_EMAIL` =
-  không gửi mail, **đơn vẫn được lưu vào Sheet bình thường** (`requireCfg_('NOTIFY_EMAIL')`
-  nằm trong `try` của `notifyNewSubmission_`, lỗi chỉ `Logger.log`).
-- Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " — " + <name>`. Nhãn loại: `Mở tài khoản`
-  / `Gửi ca` / `Yêu cầu báo giá`.
-- Nội dung: danh sách `key: value` của toàn bộ `data`, + dòng `Thời gian` + `Mã đơn (id)`.
-  Text thuần, không HTML (đủ dùng, tránh lọt spam).
+- `open-account` / `quote`: gửi mail NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
+  `send-case`: mail gửi ở bước `submission-finish` (mục II.3) để kèm được link file.
+- Gửi qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`** (Script Property, mục XI). KHÔNG có địa chỉ
+  mặc định. Chưa khai `NOTIFY_EMAIL` = không gửi mail, **đơn vẫn lưu Sheet bình thường**
+  (`requireCfg_('NOTIFY_EMAIL')` trong `try` của `notifyNewSubmission_`; hàm trả `false` khi
+  bỏ qua — `finishSubmission_` trả lại `emailed:false` cho client để debug).
+  → **Nếu Đại ca báo "email đích chưa nhận được": việc đầu tiên là kiểm Script Property
+  `NOTIFY_EMAIL` đã điền chưa** (nguyên nhân #1). Sau đó tới quota Gmail 100 mail/ngày.
+- Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " - " + <name>`. Nhãn loại: `Mo tai khoan`
+  / `Gui ca` / `Yeu cau bao gia` (giữ tiếng Việt không dấu — mail nội bộ).
+- Nội dung: danh sách `key: value` của `data` (bỏ `uploaded_files`/`files_folder`), + `Thoi gian`
+  + `Ma don`, + khối "File dinh kem" (link thư mục + từng file) nếu có. Text thuần, không HTML.
 - ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập. Ngày cao điểm chạm mốc → OTP
   không gửi được. Lúc đó cân nhắc tách tài khoản Gmail riêng cho OTP, hoặc chuyển kênh báo
   form sang Telegram (xem `hosting-and-quotas.md`).
@@ -254,8 +280,11 @@ tự lưu lại — KHÔNG khai tay). Tên sheet / cột CỐ ĐỊNH:
 
 ## XI. Script Properties (Project Settings > Script Properties) — TÊN CỐ ĐỊNH
 
-- `NOTIFY_EMAIL` — **bắt buộc nếu muốn nhận mail báo đơn**. KHÔNG có giá trị mặc định trong
-  code. Để trống = không gửi mail (đơn vẫn lưu bình thường). Chủ dự án tự điền sau.
+- `NOTIFY_EMAIL` — **bắt buộc nếu muốn nhận mail báo đơn** VÀ để chia sẻ file Drive (mục II.3).
+  KHÔNG có giá trị mặc định. Để trống = không gửi mail + file Drive không share cho ai ngoài
+  chủ script (đơn vẫn lưu bình thường).
+- `CASE_FILES_FOLDER_ID` — KHÔNG cần điền, `caseParentFolder_` tự tạo thư mục
+  `Trident Dental Lab - Case Files` lần đầu có file upload và tự lưu id.
 - `SPREADSHEET_ID` — KHÔNG cần điền, code tự tạo lần chạy đầu và tự lưu lại. Nếu ĐÃ có giá trị
   mà mở thất bại → throw rõ ràng, KHÔNG tự tạo file mới đè lên.
 - (KHÔNG cần `GITHUB_*` — dự án này không publish gì lên repo.)
@@ -267,9 +296,12 @@ tự lưu lại — KHÔNG khai tay). Tên sheet / cột CỐ ĐỊNH:
 2. Deploy > New deployment > **Web app** · Execute as **Me** · Who has access **Anyone**.
    → được `<GAS_EXEC_URL>` dạng `.../exec`. **Gửi URL này cho agent** để nối 3 form + tạo
    `/admin/` + `/admin-gas/`.
-3. Project Settings > Script Properties: thêm `NOTIFY_EMAIL` = email nhận báo đơn.
+3. Project Settings > Script Properties: thêm `NOTIFY_EMAIL` = email nhận báo đơn + xem file.
 4. Vào tab Người dùng (đăng nhập bằng chính account deploy — là `root` ngầm định) để thêm các
    email `editor`.
+5. **Sau mỗi lần dán lại `Code.js` có thêm dịch vụ Google mới (lần này: `DriveApp`)**: mở editor,
+   chạy 1 hàm bất kỳ (vd `doGet`) → chấp nhận màn hình xin quyền Drive. Không làm thì upload
+   file "Send a Case" sẽ lỗi quyền (playbook gotcha #5).
 
 ## XIII. `gas/` được gitignore — quy tắc đồng bộ code
 

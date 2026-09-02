@@ -169,6 +169,34 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   var wzStatus = document.getElementById("wz-status");
+  var MAX_UPLOAD_BYTES = 20 * 1024 * 1024; // giữ khớp MAX_FILE_BYTES phía server
+  var LAB_EMAIL = "cases.thetridentlab@gmail.com";
+
+  function setWz(msg, kind) {
+    if (!wzStatus) return;
+    wzStatus.hidden = false;
+    wzStatus.className = "td-form-status is-" + (kind || "err");
+    wzStatus.textContent = msg;
+  }
+  function fileToB64(file) {
+    return new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () {
+        var s = String(r.result || "");
+        resolve(s.slice(s.indexOf(",") + 1));
+      };
+      r.onerror = function () { reject(new Error("Could not read " + file.name)); };
+      r.readAsDataURL(file);
+    });
+  }
+  function pickedFiles() {
+    var a = document.getElementById("wz-scan-files");
+    var b = document.getElementById("wz-photo-files");
+    return [].concat(
+      a && a.files ? Array.prototype.slice.call(a.files) : [],
+      b && b.files ? Array.prototype.slice.call(b.files) : []
+    );
+  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -177,6 +205,10 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitBtn = form.querySelector('[type="submit"]');
     var hp = document.getElementById("wz-hp");
     var sortedTeeth = selectedTeeth.slice().sort(function (a, b) { return a - b; });
+    var allFiles = pickedFiles();
+    var tooBig = allFiles.filter(function (f) { return f.size > MAX_UPLOAD_BYTES; });
+    var files = allFiles.filter(function (f) { return f.size <= MAX_UPLOAD_BYTES; });
+
     var payload = {
       _hp: hp ? hp.value : "",
       dentist_name: fieldValue("wz-dentist-name"),
@@ -202,31 +234,90 @@ document.addEventListener("DOMContentLoaded", function () {
       submitBtn.dataset.label = submitBtn.textContent;
       submitBtn.textContent = "Sending…";
     }
+    function restoreBtn() {
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = submitBtn.dataset.label || "Submit Case"; }
+    }
 
-    var send = window.tdlPostSubmission
-      ? window.tdlPostSubmission("send-case", payload)
-      : Promise.resolve({ ok: false, error: "config" });
+    var post = window.tdlPostSubmission ||
+      function () { return Promise.resolve({ ok: false, error: "config" }); };
 
-    send.then(function (res) {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = submitBtn.dataset.label || "Submit Case";
-      }
-      if (res && res.ok) {
-        var ref = generateCaseRef();
-        form.hidden = true;
-        document.getElementById("td-wizard-progress").hidden = true;
-        confirmText.textContent =
-          "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
-        confirm.hidden = false;
-      } else if (wzStatus) {
-        wzStatus.hidden = false;
-        wzStatus.className = "td-form-status is-err";
-        wzStatus.textContent =
+    post("send-case", payload).then(function (res) {
+      if (!res || !res.ok || !res.id) {
+        restoreBtn();
+        setWz(
           res && res.error === "network"
             ? "Couldn't send — please check your connection and try again."
-            : (res && res.error) || "Something went wrong. Please try again later.";
+            : (res && res.error) || "Something went wrong. Please try again later.",
+          "err"
+        );
+        return;
       }
+      var caseId = res.id;
+      var uploaded = 0;
+      var failed = [];
+
+      function uploadNext(i) {
+        if (i >= files.length) return finish();
+        var f = files[i];
+        if (submitBtn) submitBtn.textContent = "Uploading file " + (i + 1) + " of " + files.length + "…";
+        setWz("Uploading file " + (i + 1) + " of " + files.length + ": " + f.name, "ok");
+        return fileToB64(f)
+          .then(function (b64) {
+            return post("submission-file", {
+              id: caseId,
+              name: f.name,
+              mimeType: f.type || "application/octet-stream",
+              dataB64: b64,
+            });
+          })
+          .then(function (r) {
+            if (r && r.ok) uploaded++;
+            else failed.push({ name: f.name, why: (r && r.error) || "upload failed" });
+            return uploadNext(i + 1);
+          })
+          .catch(function () {
+            failed.push({ name: f.name, why: "network error" });
+            return uploadNext(i + 1);
+          });
+      }
+
+      function finish() {
+        if (submitBtn) submitBtn.textContent = "Finishing…";
+        return post("submission-finish", { id: caseId })
+          .then(function () { done(); })
+          .catch(function () { done(); });
+      }
+
+      function done() {
+        restoreBtn();
+        var ref = generateCaseRef();
+
+        var line;
+        if (uploaded && !failed.length && !tooBig.length) {
+          line =
+            "Case " + ref + " and " + uploaded + " file" + (uploaded === 1 ? "" : "s") +
+            " uploaded successfully. Our team will confirm by email and keep you updated at every stage.";
+        } else {
+          line =
+            "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
+        }
+        if (failed.length || tooBig.length) {
+          var names = failed
+            .map(function (x) { return x.name; })
+            .concat(tooBig.map(function (f) { return f.name + " (over 20 MB)"; }));
+          line +=
+            "\n\nSome files could not be uploaded here — please email them to " +
+            LAB_EMAIL + ": " + names.join(", ") + ".";
+        }
+
+        form.hidden = true;
+        document.getElementById("td-wizard-progress").hidden = true;
+        confirmText.textContent = line;
+        confirmText.style.whiteSpace = "pre-line";
+        confirm.hidden = false;
+      }
+
+      uploadNext(0);
     });
   });
 
