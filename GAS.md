@@ -154,13 +154,13 @@ Mỗi đơn phát sinh **2 email**: (a) báo nội bộ tới `NOTIFY_EMAIL`, (b
   `NOTIFY_EMAIL` đã điền chưa** (nguyên nhân #1). Sau đó tới quota Gmail 100 mail/ngày.
 - Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " - " + <ref> + " - " + <name>`. Nhãn loại:
   `Mo tai khoan` / `Gui ca` / `Yeu cau bao gia` (giữ tiếng Việt không dấu — mail nội bộ).
-  Thân mail có thêm dòng `Ma tham chieu: <ref>`.
-- Nội dung: danh sách `key: value` của `data` + `Thoi gian` + `Ma don`. Text thuần, không HTML.
+- Nội dung: **HTML** render từ template **`gas/mail-internal.html`** (`internalEmailData_` dựng
+  `contact[]` + `rows[]`) — cùng phong cách với email khách: header navy + logo, thẻ Contact
+  (email/phone bấm được), bảng Details. `htmlBody` + `body` text thuần đi kèm (fallback).
   - Bỏ mọi key bắt đầu bằng `_` (vd `_notified`).
-  - `scan_files` / `photo_files`: in **link Drive ngay trên dòng đó**
-    (`scan_files: https://drive.google.com/…`, nhiều file nối bằng `, `); rỗng → `(none)`.
-  - `files_folder`: in link thư mục Drive (chỉ `NOTIFY_EMAIL` mở được).
-  - KHÔNG còn khối "File dinh kem" riêng — link nằm luôn trong dòng field.
+  - `scan_files` / `photo_files` / `files_folder`: render thành **link Drive bấm được**
+    (chỉ `NOTIFY_EMAIL` mở được); `scan_files`/`photo_files` rỗng → `(none)`.
+  - Nếu template lỗi render → tự lùi về `body` text thuần (`key: value`), không chặn việc gửi.
 - ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập **và email khách (II.4b)** — giờ mỗi
   đơn tốn 2 mail. Ngày cao điểm chạm mốc → OTP không gửi được. Lúc đó cân nhắc tách tài khoản
   Gmail riêng cho OTP, hoặc chuyển kênh báo nội bộ sang Telegram (xem `hosting-and-quotas.md`).
