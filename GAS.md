@@ -105,7 +105,8 @@ Wizard `/prescription-form/` cho chọn file scan (STL/PLY/OBJ) + ảnh. Luồng
 `js/case-wizard.js` + server `saveCaseFile_`/`finishSubmission_`):
 
 1. Client POST `type:'send-case'` (metadata) → server lưu Sheet, **chưa gửi mail**, trả `{ok, id}`.
-   Trong `data` vẫn có `scan_files`/`photo_files` = mảng TÊN file (đối chiếu ý định khách gửi).
+   Lúc này `data.scan_files`/`data.photo_files` = mảng TÊN file (ý định khách gửi); bước 3 sẽ
+   GHI ĐÈ bằng mảng link Drive.
 2. Với mỗi file ≤ **20 MB** (`MAX_FILE_BYTES`, khớp `MAX_UPLOAD_BYTES` client): client đọc
    base64 → POST `type:'submission-file' {id, name, mimeType, dataB64}` → server
    `saveCaseFile_`: `Utilities.base64Decode` → `DriveApp` tạo file trong thư mục
@@ -115,10 +116,16 @@ Wizard `/prescription-form/` cho chọn file scan (STL/PLY/OBJ) + ảnh. Luồng
    File > 20 MB: client KHÔNG upload, hiện dòng nhắc khách email tới
    `cases.thetridentlab@gmail.com` (base64 qua `doPost` không kham nổi file lớn — GAS giới hạn
    payload ~50 MB + 6 phút runtime; 20 MB là mức an toàn).
-3. Client POST `type:'submission-finish' {id}` → `finishSubmission_`: liệt kê file trong
-   `case-<id>/`, gắn `data.uploaded_files` + `data.files_folder` vào đơn, **rồi mới gửi 1 email**
-   qua `notifyNewSubmission_(... , { folderUrl, links })` — thân mail có link thư mục + từng file.
-4. UI: đang upload hiện "Uploading file X of Y…"; xong hiện màn xác nhận
+3. Sau mỗi lần upload, client GOM link trả về vào 2 mảng `scanLinks` / `photoLinks`
+   (`[{name, url}]`), rồi POST **đúng 1 lần** `type:'submission-finish' {id, scan_files, photo_files}`
+   → `finishSubmission_(id, scanFiles, photoFiles)`:
+   - **Khoá idempotent**: nếu `data._notified` đã bật → return luôn, **KHÔNG gửi email lần 2**
+     (client có retry tối đa 3 lần nếu `submission-finish` fail → khoá này chặn mail trùng).
+   - Gắn `data.scan_files` = mảng link scan, `data.photo_files` = mảng link ảnh,
+     `data.files_folder` = URL thư mục, bật `data._notified = true`, ghi lại cột `data`.
+   - Nếu client không gửi link nào mà thư mục Drive vẫn có file → tự liệt kê vào `scan_files` (dự phòng).
+   - Gọi `notifyNewSubmission_('send-case', rec, data)` — **gửi ĐÚNG 1 email**.
+4. UI: đang upload hiện "Uploading N / M…" + dòng tên file `✓ / ✗`; xong hiện màn xác nhận
    *"Case <ref> and N files uploaded successfully…"* (tiếng Anh). File lỗi/quá cỡ → thêm dòng
    *"…please email them to cases.thetridentlab@gmail.com: a, b."*
 
@@ -132,7 +139,8 @@ thì upload file lỗi "You do not have permission".
 ### II.4. Gửi email báo
 
 - `open-account` / `quote`: gửi mail NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
-  `send-case`: mail gửi ở bước `submission-finish` (mục II.3) để kèm được link file.
+  `send-case`: gửi **ĐÚNG 1 email** ở bước `submission-finish` (mục II.3), có khoá `data._notified`
+  chặn mail trùng khi client retry. KHÔNG gửi mail ở bước `send-case` ban đầu.
 - Gửi qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`** (Script Property, mục XI). KHÔNG có địa chỉ
   mặc định. Chưa khai `NOTIFY_EMAIL` = không gửi mail, **đơn vẫn lưu Sheet bình thường**
   (`requireCfg_('NOTIFY_EMAIL')` trong `try` của `notifyNewSubmission_`; hàm trả `false` khi
@@ -141,8 +149,12 @@ thì upload file lỗi "You do not have permission".
   `NOTIFY_EMAIL` đã điền chưa** (nguyên nhân #1). Sau đó tới quota Gmail 100 mail/ngày.
 - Tiêu đề: `"[Trident Dental Lab] " + <nhãn loại> + " - " + <name>`. Nhãn loại: `Mo tai khoan`
   / `Gui ca` / `Yeu cau bao gia` (giữ tiếng Việt không dấu — mail nội bộ).
-- Nội dung: danh sách `key: value` của `data` (bỏ `uploaded_files`/`files_folder`), + `Thoi gian`
-  + `Ma don`, + khối "File dinh kem" (link thư mục + từng file) nếu có. Text thuần, không HTML.
+- Nội dung: danh sách `key: value` của `data` + `Thoi gian` + `Ma don`. Text thuần, không HTML.
+  - Bỏ mọi key bắt đầu bằng `_` (vd `_notified`).
+  - `scan_files` / `photo_files`: in **link Drive ngay trên dòng đó**
+    (`scan_files: https://drive.google.com/…`, nhiều file nối bằng `, `); rỗng → `(none)`.
+  - `files_folder`: in link thư mục Drive (chỉ `NOTIFY_EMAIL` mở được).
+  - KHÔNG còn khối "File dinh kem" riêng — link nằm luôn trong dòng field.
 - ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập. Ngày cao điểm chạm mốc → OTP
   không gửi được. Lúc đó cân nhắc tách tài khoản Gmail riêng cho OTP, hoặc chuyển kênh báo
   form sang Telegram (xem `hosting-and-quotas.md`).

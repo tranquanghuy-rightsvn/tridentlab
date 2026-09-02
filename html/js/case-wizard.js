@@ -192,10 +192,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function pickedFiles() {
     var a = document.getElementById("wz-scan-files");
     var b = document.getElementById("wz-photo-files");
-    return [].concat(
-      a && a.files ? Array.prototype.slice.call(a.files) : [],
-      b && b.files ? Array.prototype.slice.call(b.files) : []
-    );
+    var out = [];
+    if (a && a.files) Array.prototype.forEach.call(a.files, function (f) { out.push({ file: f, kind: "scan" }); });
+    if (b && b.files) Array.prototype.forEach.call(b.files, function (f) { out.push({ file: f, kind: "photo" }); });
+    return out;
   }
 
   form.addEventListener("submit", function (e) {
@@ -205,9 +205,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var submitBtn = form.querySelector('[type="submit"]');
     var hp = document.getElementById("wz-hp");
     var sortedTeeth = selectedTeeth.slice().sort(function (a, b) { return a - b; });
-    var allFiles = pickedFiles();
-    var tooBig = allFiles.filter(function (f) { return f.size > MAX_UPLOAD_BYTES; });
-    var files = allFiles.filter(function (f) { return f.size <= MAX_UPLOAD_BYTES; });
+    var picked = pickedFiles();
+    var tooBig = picked.filter(function (p) { return p.file.size > MAX_UPLOAD_BYTES; }).map(function (p) { return p.file; });
+    var toUpload = picked.filter(function (p) { return p.file.size <= MAX_UPLOAD_BYTES; });
 
     var payload = {
       _hp: hp ? hp.value : "",
@@ -253,14 +253,23 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
       var caseId = res.id;
-      var uploaded = 0;
+      var scanLinks = [];
+      var photoLinks = [];
+      var doneNames = [];  // dòng trạng thái đang chạy trên form
       var failed = [];
 
+      function progress(current) {
+        var parts = doneNames.slice();
+        if (current) parts.push(current + " …");
+        setWz("Uploading files:  " + parts.join("   "), "ok");
+      }
+
       function uploadNext(i) {
-        if (i >= files.length) return finish();
-        var f = files[i];
-        if (submitBtn) submitBtn.textContent = "Uploading file " + (i + 1) + " of " + files.length + "…";
-        setWz("Uploading file " + (i + 1) + " of " + files.length + ": " + f.name, "ok");
+        if (i >= toUpload.length) return finish();
+        var f = toUpload[i].file;
+        var kind = toUpload[i].kind;
+        if (submitBtn) submitBtn.textContent = "Uploading " + (i + 1) + " / " + toUpload.length + "…";
+        progress(f.name);
         return fileToB64(f)
           .then(function (b64) {
             return post("submission-file", {
@@ -271,40 +280,64 @@ document.addEventListener("DOMContentLoaded", function () {
             });
           })
           .then(function (r) {
-            if (r && r.ok) uploaded++;
-            else failed.push({ name: f.name, why: (r && r.error) || "upload failed" });
+            if (r && r.ok && r.url) {
+              (kind === "scan" ? scanLinks : photoLinks).push({ name: r.fileName || f.name, url: r.url });
+              doneNames.push(f.name + " ✓");
+            } else {
+              failed.push(f.name);
+              doneNames.push(f.name + " ✗");
+            }
+            progress(null);
             return uploadNext(i + 1);
           })
           .catch(function () {
-            failed.push({ name: f.name, why: "network error" });
+            failed.push(f.name);
+            doneNames.push(f.name + " ✗");
+            progress(null);
             return uploadNext(i + 1);
           });
       }
 
-      function finish() {
+      function finish(attempt) {
+        attempt = attempt || 1;
         if (submitBtn) submitBtn.textContent = "Finishing…";
-        return post("submission-finish", { id: caseId })
-          .then(function () { done(); })
-          .catch(function () { done(); });
+        // 1 lần gọi duy nhất kết thúc case -> server có khoá _notified nên
+        // gửi ĐÚNG 1 email kèm link, dù client có lỡ gọi lại.
+        return post("submission-finish", {
+          id: caseId,
+          scan_files: scanLinks,
+          photo_files: photoLinks,
+        })
+          .then(function (r) {
+            if ((!r || !r.ok) && attempt < 3) return finish(attempt + 1);
+            done();
+          })
+          .catch(function () {
+            if (attempt < 3) return finish(attempt + 1);
+            done();
+          });
       }
 
       function done() {
         restoreBtn();
         var ref = generateCaseRef();
+        var okCount = scanLinks.length + photoLinks.length;
 
         var line;
-        if (uploaded && !failed.length && !tooBig.length) {
+        if (okCount && !failed.length && !tooBig.length) {
           line =
-            "Case " + ref + " and " + uploaded + " file" + (uploaded === 1 ? "" : "s") +
+            "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
             " uploaded successfully. Our team will confirm by email and keep you updated at every stage.";
         } else {
           line =
             "Case " + ref + " has been received. Our team will confirm by email and keep you updated at every stage.";
+          if (okCount) line = "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
+            " received. Our team will confirm by email and keep you updated at every stage.";
         }
         if (failed.length || tooBig.length) {
-          var names = failed
-            .map(function (x) { return x.name; })
-            .concat(tooBig.map(function (f) { return f.name + " (over 20 MB)"; }));
+          var names = failed.concat(
+            tooBig.map(function (f) { return f.name + " (over 20 MB)"; })
+          );
           line +=
             "\n\nSome files could not be uploaded here — please email them to " +
             LAB_EMAIL + ": " + names.join(", ") + ".";
