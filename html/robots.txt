@@ -1,0 +1,7 @@
+# Trident Dental Lab — tridentdentallab.com.au
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /admin-gas/
+
+Sitemap: https://tridentdentallab.com.au/sitemap.xml
