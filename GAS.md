@@ -138,14 +138,16 @@ thì upload file lỗi "You do not have permission".
 
 ### II.4. Gửi email báo
 
-Mỗi đơn phát sinh **2 email**: (a) báo nội bộ tới `NOTIFY_EMAIL`, (b) xác nhận HTML tới khách
-(mục II.4b). Cả 2 kèm **mã tham chiếu** `ref` (`TDL-` + 6 ký tự, `newRef_()`), sinh ở
-`handlePublicSubmission_`, lưu trong `data.ref`, và trả về client (`res.ref`) để hiện trên UI
-+ trùng khớp với mã trong email.
+Hiện tại **CHỈ gửi 1 email cho admin** (`NOTIFY_EMAIL`). Email xác nhận cho khách (mục II.4b)
+**đang TẮT** qua cờ `SEND_CUSTOMER_EMAIL = false` ở đầu `Code.js` — code + template vẫn còn,
+đổi cờ thành `true` là bật lại. Email admin kèm **mã tham chiếu** `ref` (`TDL-` + 6 ký tự,
+`newRef_()`), sinh ở `handlePublicSubmission_`, lưu trong `data.ref`, trả về client (`res.ref`)
+để hiện trên UI cho khách.
 
-- `open-account` / `quote`: gửi cả 2 mail NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
-  `send-case`: gửi cả 2 ở bước `submission-finish` (mục II.3), có khoá `data._notified`
+- `open-account` / `quote`: gửi mail admin NGAY trong `handlePublicSubmission_` sau khi lưu Sheet.
+  `send-case`: gửi ở bước `submission-finish` (mục II.3), có khoá `data._notified`
   chặn mail trùng khi client retry. KHÔNG gửi mail ở bước `send-case` ban đầu.
+  (`notifyCustomer_` vẫn được gọi ở các chỗ đó nhưng return sớm khi cờ tắt.)
 - Mail nội bộ gửi qua `MailApp.sendEmail` tới **`NOTIFY_EMAIL`** (Script Property, mục XI). KHÔNG có địa chỉ
   mặc định. Chưa khai `NOTIFY_EMAIL` = không gửi mail, **đơn vẫn lưu Sheet bình thường**
   (`requireCfg_('NOTIFY_EMAIL')` trong `try` của `notifyNewSubmission_`; hàm trả `false` khi
@@ -161,11 +163,14 @@ Mỗi đơn phát sinh **2 email**: (a) báo nội bộ tới `NOTIFY_EMAIL`, (b
   - `scan_files` / `photo_files` / `files_folder`: render thành **link Drive bấm được**
     (chỉ `NOTIFY_EMAIL` mở được); `scan_files`/`photo_files` rỗng → `(none)`.
   - Nếu template lỗi render → tự lùi về `body` text thuần (`key: value`), không chặn việc gửi.
-- ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập **và email khách (II.4b)** — giờ mỗi
-  đơn tốn 2 mail. Ngày cao điểm chạm mốc → OTP không gửi được. Lúc đó cân nhắc tách tài khoản
+- ⚠️ Dùng CHUNG quota Gmail 100 mail/ngày với OTP đăng nhập. Nếu bật lại email khách (II.4b) thì
+  mỗi đơn tốn 2 mail. Ngày cao điểm chạm mốc → OTP không gửi được. Lúc đó cân nhắc tách tài khoản
   Gmail riêng cho OTP, hoặc chuyển kênh báo nội bộ sang Telegram (xem `hosting-and-quotas.md`).
 
-### II.4b. Email xác nhận HTML gửi cho khách
+### II.4b. Email xác nhận HTML gửi cho khách — ĐANG TẮT
+
+> Tắt qua cờ `SEND_CUSTOMER_EMAIL = false` (đầu `Code.js`). Giữ lại nguyên vẹn để bật nhanh sau.
+> `notifyCustomer_` return ngay khi cờ tắt; `mail-customer.html` khi đó là file không dùng tới.
 
 - Template: **`gas/mail-customer.html`** (file HTML riêng, render bằng
   `HtmlService.createTemplateFromFile('mail-customer')`, truyền `tpl.data`). Bố cục email-safe:

@@ -328,12 +328,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (okCount && !failed.length && !tooBig.length) {
           line =
             "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
-            " uploaded successfully. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
+            " uploaded successfully. Our team will be in touch to confirm your case and keep you updated at every stage.";
         } else {
           line =
-            "Case " + ref + " has been received. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
+            "Case " + ref + " has been received. Our team will be in touch to confirm your case and keep you updated at every stage.";
           if (okCount) line = "Case " + ref + " and " + okCount + " file" + (okCount === 1 ? "" : "s") +
-            " received. A confirmation email is on its way to you, and our team will keep you updated at every stage.";
+            " received. Our team will be in touch to confirm your case and keep you updated at every stage.";
         }
         if (failed.length || tooBig.length) {
           var names = failed.concat(
