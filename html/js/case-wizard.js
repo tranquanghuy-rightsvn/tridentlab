@@ -54,13 +54,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function showStep(n) {
+    var total = progressItems.length;
     steps.forEach(function (step) {
       step.hidden = Number(step.getAttribute("data-step")) !== n;
     });
     progressItems.forEach(function (item) {
       var stepNum = Number(item.getAttribute("data-step"));
-      item.classList.toggle("is-active", stepNum === n);
-      item.classList.toggle("is-done", stepNum < n);
+      // Buoc cuoi (Review & Submit) khong co buoc nao sau no de "day" no thanh is-done,
+      // nen tu danh dau la done ngay khi toi noi, thay vi giu mau is-active nhat hon.
+      var isLastStep = stepNum === total;
+      item.classList.toggle("is-done", stepNum < n || (stepNum === n && isLastStep));
+      item.classList.toggle("is-active", stepNum === n && !isLastStep);
     });
     currentStep = n;
     if (n === 3) renderSummary();
